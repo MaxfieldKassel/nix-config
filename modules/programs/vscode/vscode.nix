@@ -6,8 +6,17 @@
 
     # Add Nix-related extensions
     extensions = with pkgs.vscode-extensions; [
-      bbenoist.nix # Basic Nix syntax highlighting
-      brettm12345.nixfmt-vscode # Formatting for Nix files
+      # Basic Nix syntax highlighting
+      # https://marketplace.visualstudio.com/items?itemName=bbenoist.Nix
+      bbenoist.nix 
+
+      # Nix formatter for vscode
+      # https://marketplace.visualstudio.com/items?itemName=brettm12345.nixfmt-vscode
+      brettm12345.nixfmt-vscode 
+
+      # Color coded comments #! like this! 
+      # https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments
+      aaron-bond.better-comments
     ];
 
     # VSCode settings
@@ -16,27 +25,11 @@
       "editor.defaultFormatter" = "brettm12345.nixfmt-vscode";
       "nix.enableLanguageServer" = true;
       "nixpkgs.autoInstallLSP" = true;
-      # Turn on autosave
+      # Turn on autosave, use 100 ms as default
       "files.autoSave" = "afterDelay";
-      "files.autoSaveDelay" = 10; # Delay in milliseconds
-      # Set terminal to hack nerd font
+      "files.autoSaveDelay" = 100; # Delay in milliseconds
+      # Set terminal to hack nerd font which is installed in common.nix
       "terminal.integrated.fontFamily" = "Hack Nerd Font";
-    };
-
-    # Optional: Add global snippets for common Nix options
-    globalSnippets = {
-      nix = {
-        "Nix Option Example" = {
-          "prefix" = "nixOption";
-          "body" = ''
-            option = {
-              description = "$1";
-              type = "$2";
-              default = "$3";
-            };'';
-          "description" = "Template for defining a Nix option.";
-        };
-      };
     };
   };
 }

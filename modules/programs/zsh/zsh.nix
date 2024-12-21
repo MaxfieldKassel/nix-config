@@ -63,6 +63,12 @@
     enable = true;
   };
 
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true; 
+    nix-direnv.enable = true;
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -79,7 +85,7 @@
 
       # z is a replacement for cd written in rust with some advanced features. 
       cd = "z";
-      
+
       # zi uses fzf to find a file to enter.
       ci = "zi";
 
@@ -93,10 +99,13 @@
       ignoreSpace = true;
       ignoreAllDups = true;
       ignoreDups = true;
-      size = 5000;
-      save = 5000;
+      size = 50000;
+      save = 50000;
     };
+
     initExtra = ''
+
+    
       ############################################################################
       ### The following config are dedicated to improving tab usability in zsh ###
       ############################################################################
