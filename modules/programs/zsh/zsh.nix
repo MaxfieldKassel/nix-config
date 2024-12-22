@@ -104,6 +104,31 @@
     };
 
     initExtra = ''
+      # Check to see if there is a dev container in that folder.
+      # If so, prompt the user and then enter the dev container.
+      function enter_devcontainer {
+          if [ -d ".devcontainer" ]; then
+              echo -n "Dev Container detected. Start environment? (y/n): "
+              read response
+              if [[ "$response" =~ ^[Yy]$ ]]; then
+                  # Start the dev container
+                  devcontainer up --workspace-folder "$(pwd)" > /dev/null 2>&1
+
+                  # Attach to the dev container using devcontainer exec
+                  devcontainer exec --workspace-folder "$(pwd)" /bin/bash
+              fi
+          fi
+      }
+
+
+      # Hook for entering folders
+      function chpwd() {
+          enter_devcontainer
+      }
+
+      # Trigger on shell startup
+      enter_devcontainer
+
       ############################################################################
       ### The following config are dedicated to improving tab usability in zsh ###
       ############################################################################
