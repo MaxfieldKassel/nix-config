@@ -36,6 +36,10 @@
     # (for now) and should not need updates
     # https://github.com/dylanaraps/neofetch
     pkgs.neofetch
+
+    # Allows for opening dev containers in the cli without vscode.
+    # https://containers.dev
+    pkgs.devcontainer
   ];
 
   # A list of all nerd fonts are found here:
