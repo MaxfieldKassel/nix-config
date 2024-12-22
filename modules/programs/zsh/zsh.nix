@@ -118,6 +118,9 @@
               return 1
           fi
 
+          # If any part of the command fails, return an error.
+          set -e 
+
           mkdir -p "$1" && cd "$1" 
 
           nix flake new -t "github:nix-community/nix-direnv" .
