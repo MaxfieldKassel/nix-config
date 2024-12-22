@@ -26,7 +26,7 @@
     # VSCode settings
     userSettings = {
       "editor.formatOnSave" = true;
-      "editor.defaultFormatter" = "brettm12345.nixfmt-vscode";
+      "editor.formatOnPaste" = true;
       
       # Turn on autosave, use 100 ms as default
       "files.autoSave" = "afterDelay";
