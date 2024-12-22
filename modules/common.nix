@@ -12,6 +12,8 @@
     pkgs.nixfmt-rfc-style
     pkgs.home-manager
     pkgs.zsh-fzf-tab
+    pkgs.synology-drive-client
+    pkgs.syncthing
 
     #####################
     ##### CLI Tools #####
@@ -40,6 +42,10 @@
     # Allows for opening dev containers in the cli without vscode.
     # https://containers.dev
     pkgs.devcontainer
+
+    # A simple program to send files from one computer to another.
+    # https://github.com/magic-wormhole/magic-wormhole.rs
+    pkgs.magic-wormhole-rs
   ];
 
   # A list of all nerd fonts are found here:

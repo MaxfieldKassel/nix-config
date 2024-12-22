@@ -104,6 +104,45 @@
     };
 
     initExtra = ''
+      
+      # Create a function called 'create' that will create a new directory and enter it,
+      # also direnv should be added with a flake from the templates.
+      function create() {
+          if [ -z "$1" ]; then
+              echo "Usage: create <directory>"
+              return 1
+          fi
+
+          if [ -d "$1" ]; then
+              echo "Directory already exists"
+              return 1
+          fi
+
+          mkdir -p "$1" && cd "$1" 
+
+          nix flake new -t "github:nix-community/nix-direnv" .
+          nix flake update
+
+          echo "use flake" >> .envrc
+          direnv allow
+          direnv reload
+
+          echo ".direnv" >> .gitignore
+
+          # Create a basic git repository and add gitignore and commit files.
+          git init
+          git add .envrc  .git  .gitignore flake.nix flake.lock
+          git commit -m "Init"
+      }
+
+      # VSCode shell integration
+      [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
+      
+
+      ############################################################################
+      ###################### Start devcontainer integration ######################
+      ############################################################################
+
       # Check to see if there is a dev container in that folder.
       # If so, prompt the user and then enter the dev container.
       function enter_devcontainer {
