@@ -14,6 +14,7 @@
     pkgs.zsh-fzf-tab
     pkgs.synology-drive-client
     pkgs.syncthing
+    pkgs.nix-search
 
     #####################
     ##### CLI Tools #####
