@@ -21,6 +21,11 @@
       # Dev containers for vscode
       # https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
       ms-vscode-remote.remote-containers
+
+      # Direnv for vscode (Needed if using direnv
+      # otherwise extensions won't work :()
+      # https://github.com/direnv/direnv-vscode
+      mkhl.direnv
     ];
 
     # VSCode settings
