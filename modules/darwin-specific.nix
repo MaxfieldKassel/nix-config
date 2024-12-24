@@ -1,4 +1,9 @@
-{ userName, pkgs, ... }:
+{
+  config,
+  userName,
+  pkgs,
+  ...
+}:
 
 {
   users.users."${userName}" = {

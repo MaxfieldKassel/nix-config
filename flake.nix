@@ -5,8 +5,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
+    mac-app-util.url = "github:hraban/mac-app-util";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nix-darwin.follows = "nix-darwin";
   };
 
   outputs =
@@ -15,6 +17,7 @@
       nixpkgs,
       nix-darwin,
       home-manager,
+      mac-app-util,
       ...
     }:
     let
@@ -35,7 +38,7 @@
                 (
                   { config, pkgs, ... }:
                   import ./modules/darwin-specific.nix {
-                    inherit userName pkgs;
+                    inherit config userName pkgs;
                   }
                 )
                 home-manager.darwinModules.home-manager
@@ -46,6 +49,7 @@
                     home.homeDirectory = "/Users/${userName}";
                   };
                 }
+                mac-app-util.darwinModules.default # Add mac-app-util module
               ];
             };
           }
