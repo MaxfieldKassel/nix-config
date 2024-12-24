@@ -9,6 +9,7 @@
     pkgs.rectangle
     pkgs.maccy
     pkgs.colima
+    pkgs.whatsapp-for-mac
   ];
 
   system.activationScripts.rectangleDefaults = ''

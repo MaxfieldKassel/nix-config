@@ -4,7 +4,7 @@
     enable = true;
     lfs.enable = true;
     delta.enable = true;
-    gitui.enable = true;
+    
     userName = "Maxfield Kassel"; # Replace this with your git username
     userEmail = "106034283+MaxfieldKassel@users.noreply.github.com"; # Replace this with your github email
     extraConfig = {
@@ -25,5 +25,9 @@
       alias.last = "log -1 HEAD";
       alias.graph = "log --all --graph --oneline --decorate";
     };
+  };
+
+  programs.gitui = {
+    enable = true;
   };
 }

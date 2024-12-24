@@ -65,7 +65,7 @@
 
   programs.direnv = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = true; 
     nix-direnv.enable = true;
   };
 
@@ -83,7 +83,7 @@
       htop = "btop";
       tree = "eza --tree -A --total-size --long --no-time";
 
-      # z is a replacement for cd written in rust with some advanced features.
+      # z is a replacement for cd written in rust with some advanced features. 
       cd = "z";
 
       # zi uses fzf to find a file to enter.
@@ -104,7 +104,7 @@
     };
 
     initExtra = ''
-
+      
       # Create a function called 'create' that will create a new directory and enter it,
       # also direnv should be added with a flake from the templates.
       function create() {
@@ -140,7 +140,7 @@
 
       # VSCode shell integration
       [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-
+      
 
       ############################################################################
       ###################### Start devcontainer integration ######################

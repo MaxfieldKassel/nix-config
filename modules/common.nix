@@ -47,6 +47,9 @@
     # A simple program to send files from one computer to another.
     # https://github.com/magic-wormhole/magic-wormhole.rs
     pkgs.magic-wormhole-rs
+
+
+    pkgs.speedtest-cli
   ];
 
   # A list of all nerd fonts are found here:
