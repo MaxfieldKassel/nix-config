@@ -8,7 +8,7 @@
     mac-app-util.url = "github:hraban/mac-app-util";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.inputs.nix-darwin.follows = "nix-darwin";
+    mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

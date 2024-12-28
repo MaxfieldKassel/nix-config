@@ -86,6 +86,42 @@
       ShowPathbar = true;
     };
 
+    dock = {
+      persistent-apps = [
+        # Browsers
+        "/System/Cryptexes/App/System/Applications/Safari.app"
+        "${pkgs.google-chrome}/Applications/Google Chrome.app"
+
+        # Communication Apps
+        "/System/Applications/FaceTime.app"
+        "/System/Applications/Messages.app"
+        "${pkgs.signal-desktop}/Applications/Signal.app"
+        "${pkgs.whatsapp-for-mac}/Applications/WhatsApp.app"
+        "/Applications/Spark Desktop.app"
+        "/Applications/ChatGPT.app"
+
+        # Productivity Tools
+        "${pkgs.vscode}/Applications/Visual Studio Code.app"
+        "${pkgs.kitty}/Applications/kitty.app"
+        "/System/Applications/Calendar.app"
+        "/Applications/Things3.app"
+
+        # Media and Entertainment
+        "/System/Applications/Music.app"
+        "/System/Applications/Photos.app"
+        "/System/Applications/TV.app"
+
+        # Settings
+        "/System/Applications/System Settings.app"
+      ];
+      show-recents = false;
+
+      persistent-others = [
+        "/Users/${userName}/Documents"
+        "/Users/${userName}/Downloads"
+      ];
+    };
+
     screencapture.location = "~/Pictures/screenshots";
     screensaver.askForPasswordDelay = 0;
   };

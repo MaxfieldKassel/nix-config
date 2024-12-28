@@ -1,21 +1,23 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
-  kittyConfig = import ./programs/kitty/kitty.nix { inherit pkgs; };
-  zshConfig = import ./programs/zsh/zsh.nix { inherit pkgs; };
-  gitConfig = import ./programs/git/git.nix { inherit pkgs; };
-  neovimConfig = import ./programs/neovim/neovim.nix { inherit pkgs; };
-  vscodeConfig = import ./programs/vscode/vscode.nix { inherit pkgs; };
+  programNames = [
+    "kitty"
+    "zsh"
+    "git"
+    "neovim"
+    "vscode"
+  ];
+  loadConfigs = map (name: import ./programs/${name}/${name}.nix { inherit pkgs; }) programNames;
+  mergedPrograms = lib.foldl' (acc: cfg: acc // (cfg.programs or { })) { } loadConfigs;
 in
 {
-  # General settings
   home.stateVersion = "24.11";
   nixpkgs.config.allowUnfree = true;
 
-  # Merge configurations into programs
-  programs =
-    (kittyConfig.programs or { })
-    // (zshConfig.programs or { })
-    // (gitConfig.programs or { })
-    // (neovimConfig.programs or { })
-    // (vscodeConfig.programs or { });
+  programs = mergedPrograms;
 }
