@@ -95,7 +95,7 @@
 
     history = {
       append = true;
-      share = true;
+      share = false; # Do not share between each terminal. Atuin does this for us anyways.
       ignoreSpace = true;
       ignoreAllDups = true;
       ignoreDups = true;
