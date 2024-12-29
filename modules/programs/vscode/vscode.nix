@@ -8,13 +8,13 @@
     extensions = with pkgs.vscode-extensions; [
       # Basic Nix syntax highlighting
       # https://marketplace.visualstudio.com/items?itemName=bbenoist.Nix
-      bbenoist.nix 
+      bbenoist.nix
 
       # Nix formatter for vscode
       # https://marketplace.visualstudio.com/items?itemName=brettm12345.nixfmt-vscode
-      brettm12345.nixfmt-vscode 
+      brettm12345.nixfmt-vscode
 
-      # Color coded comments #! like this! 
+      # Color coded comments #! like this!
       # https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments
       aaron-bond.better-comments
 
@@ -32,7 +32,7 @@
     userSettings = {
       "editor.formatOnSave" = true;
       "editor.formatOnPaste" = true;
-      
+
       # Turn on autosave, use 100 ms as default
       "files.autoSave" = "afterDelay";
       "files.autoSaveDelay" = 100; # Delay in milliseconds
@@ -43,6 +43,7 @@
       "extensions.autoUpdate" = false;
 
       "redhat.telemetry.enabled" = false;
+      "workbench.settings.openDefaultSettings" = false;
     };
   };
 }

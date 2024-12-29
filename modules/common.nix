@@ -15,6 +15,7 @@
     pkgs.synology-drive-client
     pkgs.syncthing
     pkgs.nix-search
+    pkgs.gimp
 
     #####################
     ##### CLI Tools #####

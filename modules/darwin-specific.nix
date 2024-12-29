@@ -15,6 +15,7 @@
     pkgs.maccy
     pkgs.colima
     pkgs.whatsapp-for-mac
+    pkgs.libreoffice-bin
   ];
 
   system.activationScripts.rectangleDefaults = ''
@@ -61,6 +62,10 @@
     defaults write org.p0deje.Maccy removeFormattingByDefault -bool true
     defaults write org.p0deje.Maccy searchMode -string "fuzzy"
     defaults write org.p0deje.Maccy showInStatusBar -bool false
+  '';
+
+  system.activationScripts.extraActivation.text = ''
+    softwareupdate --install-rosetta --agree-to-license
   '';
 
   system.stateVersion = 5;
@@ -116,6 +121,7 @@
       ];
       show-recents = false;
 
+      # Shows these folders in the tool bar.
       persistent-others = [
         "/Users/${userName}/Documents"
         "/Users/${userName}/Downloads"

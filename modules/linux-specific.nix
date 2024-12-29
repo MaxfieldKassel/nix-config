@@ -11,5 +11,9 @@
     shell = pkgs.zsh;
   };
 
+  environment.systemPackages = [
+    pkgs.libreoffice
+  ];
+
   services.docker.enable = true;
 }
