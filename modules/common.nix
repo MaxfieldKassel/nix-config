@@ -16,6 +16,7 @@
     pkgs.syncthing
     pkgs.nix-search
     pkgs.gimp
+    pkgs.librewolf-unwrapped
 
     #####################
     ##### CLI Tools #####

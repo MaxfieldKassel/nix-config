@@ -64,10 +64,6 @@
     defaults write org.p0deje.Maccy showInStatusBar -bool false
   '';
 
-  system.activationScripts.extraActivation.text = ''
-    softwareupdate --install-rosetta --agree-to-license
-  '';
-
   system.stateVersion = 5;
 
   # Enable sudo touch id authentication for easier password entry
@@ -95,6 +91,7 @@
       persistent-apps = [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
+        "${pkgs.librewolf-unwrapped}/Applications/LibreWolf.app"
         "${pkgs.google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps
