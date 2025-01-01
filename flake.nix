@@ -21,10 +21,14 @@
       ...
     }:
     let
-      # Inputs for configuration
-      hostName = "Max-Air";
-      userName = "maxkassel";
-      system = "aarch64-darwin"; # Example: "aarch64-darwin", "x86_64-linux", etc.
+      # Import frequently changed variables
+      variables = import ./variables.nix;
+      inherit (variables)
+        system
+        hostName
+        userName
+        hasHardware
+        ;
     in
     {
       # macOS configuration
@@ -64,7 +68,14 @@
               inherit system;
               modules = [
                 ./modules/common.nix
-                ./modules/linux-specific.nix
+                (
+                  { config, pkgs, ... }:
+                  import ./modules/linux-specific.nix {
+                    inherit config userName pkgs;
+                  }
+                )
+                # Conditionally include hardware-configuration.nix
+                (if hasHardware then ./hardware-configuration.nix else null)
                 home-manager.nixosModules.home-manager
                 {
                   home-manager.users."${userName}" = {
