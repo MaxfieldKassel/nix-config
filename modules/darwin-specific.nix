@@ -2,6 +2,7 @@
   config,
   userName,
   pkgs,
+  variables,
   ...
 }:
 
@@ -10,13 +11,19 @@
     home = "/Users/${userName}";
   };
 
-  environment.systemPackages = with pkgs; [
-    rectangle
-    maccy
-    colima
-    whatsapp-for-mac
-    libreoffice-bin
-  ];
+  environment.systemPackages =
+    with pkgs;
+    if variables.isHeadless then
+      [ ]
+    else
+      [
+        rectangle
+        maccy
+        colima
+        whatsapp-for-mac
+        libreoffice-bin
+
+      ];
 
   system.activationScripts.rectangleDefaults = ''
     defaults write com.knollsoft.Rectangle SUEnableAutomaticChecks -bool false

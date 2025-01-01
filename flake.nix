@@ -48,7 +48,7 @@
                 (
                   { config, pkgs, ... }:
                   import ./modules/darwin-specific.nix {
-                    inherit config userName pkgs;
+                    inherit config userName pkgs variables;
                   }
                 )
                 home-manager.darwinModules.home-manager

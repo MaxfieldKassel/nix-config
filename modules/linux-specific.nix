@@ -86,4 +86,7 @@ in
 
   # Virtualization and Docker
   virtualisation.docker.enable = true;
+
+  # Set the state version
+  system.stateVersion = "25.05";
 }
