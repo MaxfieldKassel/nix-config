@@ -23,6 +23,7 @@
     let
       # Import frequently changed variables
       variables = import ./variables.nix;
+
       inherit (variables)
         system
         hostName
@@ -38,7 +39,12 @@
             "${hostName}" = nix-darwin.lib.darwinSystem {
               inherit system;
               modules = [
-                ./modules/common.nix
+                (
+                  { pkgs, ... }:
+                  import ./modules/common.nix {
+                    inherit pkgs variables;
+                  }
+                )
                 (
                   { config, pkgs, ... }:
                   import ./modules/darwin-specific.nix {
@@ -67,11 +73,17 @@
             "${hostName}" = nixpkgs.lib.nixosSystem {
               inherit system;
               modules = [
-                ./modules/common.nix
                 (
-                  { config, pkgs, ... }:
+                  { pkgs, ... }:
+                  import ./modules/common.nix {
+                    inherit pkgs variables;
+                  }
+                )
+
+                (
+                  { pkgs, ... }:
                   import ./modules/linux-specific.nix {
-                    inherit config userName pkgs;
+                    inherit pkgs variables;
                   }
                 )
                 # Conditionally include hardware-configuration.nix

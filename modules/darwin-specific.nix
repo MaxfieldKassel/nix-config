@@ -91,7 +91,7 @@
       persistent-apps = with pkgs; [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
-        "${firefox-unwrapped}/Applications/Firefox.app"
+        "${brave}/Applications/Brave Browser.app"
         "${google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps
