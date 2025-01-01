@@ -23,6 +23,13 @@ in
     ignoreShellProgramCheck = true;
   };
 
+  # Packages to install (linux specific)
+  environment.systemPackages = with pkgs; [
+    libreoffice
+    whatsapp-for-linux
+  ];
+
+
   # System hostname
   networking.hostName = variables.hostName;
 

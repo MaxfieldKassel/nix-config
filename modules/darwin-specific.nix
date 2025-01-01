@@ -10,12 +10,12 @@
     home = "/Users/${userName}";
   };
 
-  environment.systemPackages = [
-    pkgs.rectangle
-    pkgs.maccy
-    pkgs.colima
-    pkgs.whatsapp-for-mac
-    pkgs.libreoffice-bin
+  environment.systemPackages = with pkgs; [
+    rectangle
+    maccy
+    colima
+    whatsapp-for-mac
+    libreoffice-bin
   ];
 
   system.activationScripts.rectangleDefaults = ''
@@ -88,23 +88,23 @@
     };
 
     dock = {
-      persistent-apps = [
+      persistent-apps = with pkgs; [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
-        "${pkgs.librewolf-unwrapped}/Applications/LibreWolf.app"
-        "${pkgs.google-chrome}/Applications/Google Chrome.app"
+        "${firefox-unwrapped}/Applications/Firefox.app"
+        "${google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps
         "/System/Applications/FaceTime.app"
         "/System/Applications/Messages.app"
-        "${pkgs.signal-desktop}/Applications/Signal.app"
-        "${pkgs.whatsapp-for-mac}/Applications/WhatsApp.app"
+        "${signal-desktop}/Applications/Signal.app"
+        "${whatsapp-for-mac}/Applications/WhatsApp.app"
         "/Applications/Spark Desktop.app"
         "/Applications/ChatGPT.app"
 
         # Productivity Tools
-        "${pkgs.vscode}/Applications/Visual Studio Code.app"
-        "${pkgs.kitty}/Applications/kitty.app"
+        "${vscode}/Applications/Visual Studio Code.app"
+        "${kitty}/Applications/kitty.app"
         "/System/Applications/Calendar.app"
         "/Applications/Things3.app"
 
