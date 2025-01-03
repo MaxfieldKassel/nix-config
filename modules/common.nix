@@ -45,7 +45,13 @@
       # https://github.com/magic-wormhole/magic-wormhole.rs
       magic-wormhole-rs
 
+      # Runs a speedtest in the CLI
+      # https://github.com/sivel/speedtest-cli
       speedtest-cli
+
+      # A graphical ping rewritten in Rust
+      # https://github.com/orf/gping
+      gping
     ]
     ++ (
       if variables.isHeadless then
