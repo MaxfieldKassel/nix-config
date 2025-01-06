@@ -52,6 +52,10 @@
       # A graphical ping rewritten in Rust
       # https://github.com/orf/gping
       gping
+
+      # A GUI for managing docker containers
+      # https://github.com/jesseduffield/lazydocker
+      lazydocker
     ]
     ++ (
       if variables.isHeadless then
