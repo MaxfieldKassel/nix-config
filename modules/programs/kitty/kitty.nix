@@ -57,6 +57,8 @@
       detect_urls = true;
       allow_remote_control = true;
       shell_integration = true;
+
+      confirm_os_window_close = 0; # Don't confirm when closing a window
     };
 
     extraConfig = ''
