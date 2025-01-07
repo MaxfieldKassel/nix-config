@@ -76,34 +76,68 @@
     '';
   };
 
+  # Try to install apps from the app store after the user has been activated
+  system.activationScripts.postUserActivation = {
+    enable = true;
+    text = ''
+      #!${pkgs.bash}/bin/bash
+      set -e
 
-# Try to install apps from the app store after the user has been activated
-system.activationScripts.postUserActivation = {
-  enable = true;
-  text = ''
-    #!${pkgs.bash}/bin/bash
-    set -e
+      install_app_if_missing() {
+        local app_id=$1
+        local app_name=$2
 
-    install_app_if_missing() {
-      local app_id=$1
-      local app_name=$2
+        if ! mas list | grep -q "^''${app_id} "; then
+          echo "Mas: Installing ''${app_name}..."
+          mas install "''${app_id}"
+        else
+          echo "Mas: ''${app_name} is already installed."
+        fi
+      }
 
-      if ! mas list | grep -q "^''${app_id} "; then
-        echo "Mas: Installing ''${app_name}..."
-        mas install "''${app_id}"
-      else
-        echo "Mas: ''${app_name} is already installed."
-      fi
-    }
+      # Install apps
+      install_app_if_missing 1195676848 "Grocery"
+      install_app_if_missing 6445813049 "Spark Desktop"
+      install_app_if_missing 904280696 "Things"
+      install_app_if_missing 1352778147 "Bitwarden"
+    '';
+  };
 
-    # Install apps
-    install_app_if_missing 1195676848 "Grocery"
-    install_app_if_missing 6445813049 "Spark Desktop"
-    install_app_if_missing 904280696 "Things"
-    install_app_if_missing 1352778147 "Bitwarden"
-  '';
-};
+  # Need to use this custom user preferences to set the Downloads and Documents folder in the dock
+  # in order to save display settings for those folders in the dock. There is an open issue for this:
+  # https://github.com/LnL7/nix-darwin/pull/1004
+  system.defaults.CustomUserPreferences = {
+    "com.apple.dock" = {
+      persistent-others = [
+        {
+          "tile-data" = {
+            "file-data" = {
+              "_CFURLString" = "/Users/${userName}/Documents";
+              "_CFURLStringType" = 0;
+            };
+            "arrangement" = 2; # Sort by: Date Added
+            "displayas" = 2; # Stack View
+            "showas" = 1; # Fan
+          };
+          "tile-type" = "directory-tile";
+        }
 
+        {
+          "tile-data" = {
+            "file-data" = {
+              "_CFURLString" = "/Users/${userName}/Downloads";
+              "_CFURLStringType" = 0;
+            };
+            "arrangement" = 1; # Sort by: Name
+            "displayas" = 2; # Stack View
+            "showas" = 1; # Fan
+          };
+          "tile-type" = "directory-tile";
+        }
+
+      ];
+    };
+  };
 
   system.stateVersion = 5;
 
@@ -158,12 +192,6 @@ system.activationScripts.postUserActivation = {
         "/System/Applications/System Settings.app"
       ];
       show-recents = false;
-
-      # Shows these folders in the tool bar.
-      persistent-others = [
-        "/Users/${userName}/Documents"
-        "/Users/${userName}/Downloads"
-      ];
     };
 
     screencapture.location = "~/Pictures/screenshots";
