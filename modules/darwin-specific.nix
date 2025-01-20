@@ -194,7 +194,7 @@
       show-recents = false;
     };
 
-    screencapture.location = "~/Pictures/screenshots";
+    screencapture.target = "clipboard";
     screensaver.askForPasswordDelay = 0;
   };
 
