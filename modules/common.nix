@@ -9,7 +9,7 @@
       openvpn
       nixfmt-rfc-style
       home-manager
-      zsh-fzf-tab
+      zsh-fzf-tab # The other fzf package does not help
       syncthing
       nix-search
 
@@ -56,6 +56,10 @@
       # A GUI for managing docker containers
       # https://github.com/jesseduffield/lazydocker
       lazydocker
+
+      # Pretty fancy and modern terminal file manager
+      # https://github.com/yorukot/superfile
+      superfile
     ]
     ++ (
       if variables.isHeadless then
