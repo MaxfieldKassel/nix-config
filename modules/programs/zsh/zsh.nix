@@ -65,13 +65,15 @@
 
   programs.direnv = {
     enable = true;
-    enableZshIntegration = true; 
+    enableZshIntegration = true;
     nix-direnv.enable = true;
   };
 
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    autocd = true;
+    # zprof.enable = true; # Enable this when you want to profile zsh
 
     # Shell aliases
     shellAliases = {
@@ -83,7 +85,7 @@
       htop = "btop";
       tree = "eza --tree -A --total-size --long --no-time";
 
-      # z is a replacement for cd written in rust with some advanced features. 
+      # z is a replacement for cd written in rust with some advanced features.
       cd = "z";
 
       # zi uses fzf to find a file to enter.
@@ -107,7 +109,6 @@
     };
 
     initExtra = ''
-      
       # Create a function called 'create' that will create a new directory and enter it,
       # also direnv should be added with a flake from the templates.
       function create() {
@@ -143,7 +144,6 @@
 
       # VSCode shell integration
       [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-      
 
       ############################################################################
       ###################### Start devcontainer integration ######################
@@ -180,12 +180,8 @@
       # Enable tab completion for hidden files
       setopt globdots
 
-      # Initialize zsh completion
-      autoload -U compinit
-      compinit
-
-      # Load fzf-tab plugin
-      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+      # Lazy-load fzf-tab
+      [[ -f "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh" ]] && source "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
 
       # Disable sorting for `git checkout` completions
       zstyle ":completion:*:git-checkout:*" sort false
