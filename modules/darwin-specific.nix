@@ -115,7 +115,7 @@
               "_CFURLString" = "/Users/${userName}/Documents";
               "_CFURLStringType" = 0;
             };
-            "arrangement" = 2; # Sort by: Date Added
+            "arrangement" = 1; # Sort by: Name
             "displayas" = 2; # Stack View
             "showas" = 1; # Fan
           };
@@ -128,7 +128,7 @@
               "_CFURLString" = "/Users/${userName}/Downloads";
               "_CFURLStringType" = 0;
             };
-            "arrangement" = 1; # Sort by: Name
+            "arrangement" = 2; # Sort by: Date Added
             "displayas" = 2; # Stack View
             "showas" = 1; # Fan
           };
