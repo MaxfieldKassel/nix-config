@@ -5,7 +5,7 @@
     enable = true;
 
     # Add Nix-related extensions
-    extensions = with pkgs.vscode-extensions; [
+    profiles.default.extensions = with pkgs.vscode-extensions; [
       # Basic Nix syntax highlighting
       # https://marketplace.visualstudio.com/items?itemName=bbenoist.Nix
       bbenoist.nix
@@ -37,7 +37,7 @@
     ];
 
     # VSCode settings
-    userSettings = {
+    profiles.default.userSettings = {
       "editor.formatOnSave" = true;
       "editor.formatOnPaste" = true;
 
