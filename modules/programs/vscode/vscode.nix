@@ -26,6 +26,14 @@
       # otherwise extensions won't work :()
       # https://github.com/direnv/direnv-vscode
       mkhl.direnv
+
+      # GitLens for vscode
+      # https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens
+      eamodio.gitlens
+
+      # Vim keybindings for vscode
+      # https://marketplace.visualstudio.com/items?itemName=vscodevim.vim
+      vscodevim.vim
     ];
 
     # VSCode settings
