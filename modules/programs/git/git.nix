@@ -18,12 +18,13 @@
       push.default = "simple"; # Only push current branch
 
       alias.co = "checkout";
-      alias.br = "branch";
-      alias.ci = "commit";
-      alias.st = "status";
+      alias.b = "branch";
+      alias.c = "commit";
+      alias.s = "status";
       alias.unstage = "reset HEAD --";
       alias.last = "log -1 HEAD";
       alias.graph = "log --all --graph --oneline --decorate";
+      alias.lg = "log --oneline --decorate";
     };
   };
 

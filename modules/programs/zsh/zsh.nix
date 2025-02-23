@@ -96,6 +96,13 @@
 
       # Override of ping
       ping = "gping";
+
+      # Git aliases
+      gits = "git status";
+      gitc = "git commit";
+      gitp = "git push";
+      gitl = "git log";
+      gitd = "git diff";
     };
 
     history = {
