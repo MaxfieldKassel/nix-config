@@ -142,7 +142,7 @@
   system.stateVersion = 5;
 
   # Enable sudo touch id authentication for easier password entry
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   # macOS defaults and services
   system.defaults = {
