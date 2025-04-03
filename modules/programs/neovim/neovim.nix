@@ -40,16 +40,12 @@
       mini-nvim # For mini.plugins like mini.icons, etc.
 
       ################################################################
-      # Debugging / DAP
-      ################################################################
-      nvim-dap # Debug Adapter Protocol (DAP) base
-      nvim-dap-ui # DAP UI (floating windows, etc.)
-
-      ################################################################
       # Git Enhancements
       ################################################################
       diffview-nvim # Modern Git diff interface
       vim-fugitive # Essential Git commands in Neovim
+      git-blame-nvim # Blame annotations in the gutter
+      git-messenger-vim # Show commit messages in a floating window
 
       ################################################################
       # Terminal & Sessions
@@ -61,6 +57,11 @@
       # Telescope Extras
       ################################################################
       telescope-fzf-native-nvim # Faster fuzzy search for Telescope
+
+      ################################################################
+      # Github Copilot
+      ################################################################
+      copilot-vim # Github Copilot
     ];
 
     #
@@ -83,6 +84,9 @@
       nnoremap <leader>fg :Telescope live_grep<CR>
       nnoremap <leader>fb :Telescope buffers<CR>
       nnoremap <leader>fh :Telescope help_tags<CR>
+      nnoremap <leader>gc :Git commit<CR>
+      nnoremap <leader>gs :Git status<CR>
+      nnoremap <leader>gd :Git diff<CR>
       inoremap jk <Esc>
 
       " Function to trim trailing whitespace
@@ -169,6 +173,8 @@
       "=================================================="
       lua << EOF
         require('telescope').load_extension('fzf')
+
+
       EOF
 
       "=================================================="
@@ -184,26 +190,6 @@
         }
       EOF
 
-      "=================================================="
-      "== DAP & DAP-UI (DEBUGGING)                     =="
-      "=================================================="
-      lua << EOF
-        local dap = require("dap")
-        local dapui = require("dapui")
-
-        dapui.setup()
-
-        -- Auto open/close DAP UI
-        dap.listeners.after.event_initialized["dapui_config"] = function()
-          dapui.open()
-        end
-        dap.listeners.before.event_terminated["dapui_config"] = function()
-          dapui.close()
-        end
-        dap.listeners.before.event_exited["dapui_config"] = function()
-          dapui.close()
-        end
-      EOF
 
       "=================================================="
       "== AUTO-SESSION (SESSION MANAGEMENT)            =="
