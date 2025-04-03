@@ -28,6 +28,7 @@
       vim-surround # Surround text manipulation
       vim-be-good # Fun practice plugin
       onedark-nvim # OneDark colorscheme (check if it provides "onedark" for lualine)
+      nvim-fzf # Fuzzy finder for files 
 
       ################################################################
       # UI Enhancements
@@ -44,8 +45,8 @@
       ################################################################
       diffview-nvim # Modern Git diff interface
       vim-fugitive # Essential Git commands in Neovim
-      git-blame-nvim # Blame annotations in the gutter
       git-messenger-vim # Show commit messages in a floating window
+      gitsigns-nvim # Git signs in the gutter
 
       ################################################################
       # Terminal & Sessions
@@ -84,9 +85,19 @@
       nnoremap <leader>fg :Telescope live_grep<CR>
       nnoremap <leader>fb :Telescope buffers<CR>
       nnoremap <leader>fh :Telescope help_tags<CR>
+      
+
+      " Git keybindings
       nnoremap <leader>gc :Git commit<CR>
       nnoremap <leader>gs :Git status<CR>
       nnoremap <leader>gd :Git diff<CR>
+      nnoremap <leader>gt :Git blame<CR>
+      nnoremap <leader>gl :Git log<CR>
+      nnoremap <leader>gR :Git rebase<CR>
+      nnoremap <leader>gS :Git stash<CR>
+      nnoremap <leader>gP :Git push<CR>
+
+
       inoremap jk <Esc>
 
       " Function to trim trailing whitespace
@@ -143,6 +154,9 @@
 
         -- mini.indentscope for indent guides
         require('mini.indentscope').setup()
+
+        -- Git signs in the gutter
+        require('gitsigns').setup()
       EOF
 
       "=================================================="
