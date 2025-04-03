@@ -96,6 +96,16 @@
       nnoremap <leader>gR :Git rebase<CR>
       nnoremap <leader>gS :Git stash<CR>
       nnoremap <leader>gP :Git push<CR>
+      nnoremap <leader>gC :Git checkout<CR>
+      nnoremap <leader>ga :Git add<CR>
+      nnoremap <leader>gA :Git add .<CR>
+
+
+      " Git signs keybindings
+      nnoremap <leader>gH :Gitsigns preview_hunk<CR>
+      nnoremap <leader>gB :Gitsigns blame_line<CR>
+
+
 
 
       inoremap jk <Esc>
