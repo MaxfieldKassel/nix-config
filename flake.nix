@@ -53,7 +53,7 @@
 
       # Import a set of packages for the docker build, potentially cross-compiling.
       dockerPkgs = if dockerSystem != system then import nixpkgs { system = dockerSystem; } else pkgs;
-      
+
     in
     {
       # macOS configuration
@@ -140,8 +140,9 @@
           config = {
             Cmd = [ "/bin/zsh" ];
           };
-          # Optionally, you can base your image on an existing Linux image.
-          fromImage = "nixos/nix";
+        copyToRoot = {
+            "/home/${userName}/.config/home-manager" = homeManagerConfig.out;
+          };
         };
       };
     };
