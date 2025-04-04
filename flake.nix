@@ -30,6 +30,30 @@
         userName
         hasHardware
         ;
+
+      # Import the pkgs for the current system
+      pkgs = import nixpkgs { inherit system; };
+
+      # Determine the target system for building the docker image.
+      # Docker images must be Linux-based, so if we're on macOS, select an appropriate Linux target.
+      dockerSystem =
+        if
+          builtins.elem system [
+            "x86_64-linux"
+            "aarch64-linux"
+          ]
+        then
+          system
+        else if system == "x86_64-darwin" then
+          "x86_64-linux"
+        else if system == "aarch64-darwin" then
+          "aarch64-linux"
+        else
+          system;
+
+      # Import a set of packages for the docker build, potentially cross-compiling.
+      dockerPkgs = if dockerSystem != system then import nixpkgs { system = dockerSystem; } else pkgs;
+      
     in
     {
       # macOS configuration
@@ -48,7 +72,12 @@
                 (
                   { config, pkgs, ... }:
                   import ./modules/darwin-specific.nix {
-                    inherit config userName pkgs variables;
+                    inherit
+                      config
+                      userName
+                      pkgs
+                      variables
+                      ;
                   }
                 )
                 home-manager.darwinModules.home-manager
@@ -101,5 +130,19 @@
           }
         else
           { };
+
+      # Docker image build: always build a Docker image targeting Linux.
+      dockerImages = {
+        "${hostName}-docker" = dockerPkgs.dockerTools.buildImage {
+          name = "${hostName}-image";
+          tag = "latest";
+          # Configure the image as desired (here we simply set a default command).
+          config = {
+            Cmd = [ "/bin/zsh" ];
+          };
+          # Optionally, you can base your image on an existing Linux image.
+          fromImage = "nixos/nix";
+        };
+      };
     };
 }
