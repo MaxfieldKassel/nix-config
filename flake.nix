@@ -34,6 +34,18 @@
       # Import the pkgs for the current system
       pkgs = import nixpkgs { inherit system; };
 
+
+      homeManagerConfig = home-manager.lib.homeManagerConfiguration {
+        # You can either duplicate your home module or reference it
+        configuration = {
+          imports = [ ./modules/home.nix ];
+          home.username = userName;
+          home.homeDirectory = "/home/${userName}";
+          # Add any additional home-manager options here.
+        };
+      };
+
+
       # Determine the target system for building the docker image.
       # Docker images must be Linux-based, so if we're on macOS, select an appropriate Linux target.
       dockerSystem =
