@@ -23,7 +23,6 @@
     let
       # Import frequently changed variables
       variables = import ./variables.nix;
-
       inherit (variables)
         system
         hostName
@@ -34,9 +33,9 @@
       # Import the pkgs for the current system
       pkgs = import nixpkgs { inherit system; };
 
-
+      # Build the Home Manager configuration as a derivation.
+      # This uses your home module from ./modules/home.nix.
       homeManagerConfig = home-manager.lib.homeManagerConfiguration {
-        # You can either duplicate your home module or reference it
         configuration = {
           imports = [ ./modules/home.nix ];
           home.username = userName;
@@ -44,7 +43,6 @@
           # Add any additional home-manager options here.
         };
       };
-
 
       # Determine the target system for building the docker image.
       # Docker images must be Linux-based, so if we're on macOS, select an appropriate Linux target.
@@ -75,12 +73,7 @@
             "${hostName}" = nix-darwin.lib.darwinSystem {
               inherit system;
               modules = [
-                (
-                  { pkgs, ... }:
-                  import ./modules/common.nix {
-                    inherit pkgs variables;
-                  }
-                )
+                ({ pkgs, ... }: import ./modules/common.nix { inherit pkgs variables; })
                 (
                   { config, pkgs, ... }:
                   import ./modules/darwin-specific.nix {
@@ -100,7 +93,7 @@
                     home.homeDirectory = "/Users/${userName}";
                   };
                 }
-                mac-app-util.darwinModules.default # Add mac-app-util module
+                mac-app-util.darwinModules.default
               ];
             };
           }
@@ -114,20 +107,8 @@
             "${hostName}" = nixpkgs.lib.nixosSystem {
               inherit system;
               modules = [
-                (
-                  { pkgs, ... }:
-                  import ./modules/common.nix {
-                    inherit pkgs variables;
-                  }
-                )
-
-                (
-                  { pkgs, ... }:
-                  import ./modules/linux-specific.nix {
-                    inherit pkgs variables;
-                  }
-                )
-                # Conditionally include hardware-configuration.nix
+                ({ pkgs, ... }: import ./modules/common.nix { inherit pkgs variables; })
+                ({ pkgs, ... }: import ./modules/linux-specific.nix { inherit pkgs variables; })
                 (if hasHardware then ./hardware-configuration.nix else null)
                 home-manager.nixosModules.home-manager
                 {
@@ -148,12 +129,14 @@
         "${hostName}-docker" = dockerPkgs.dockerTools.buildImage {
           name = "${hostName}-image";
           tag = "latest";
-          # Configure the image as desired (here we simply set a default command).
+          # Use Zsh as the default shell.
           config = {
             Cmd = [ "/bin/zsh" ];
           };
-        copyToRoot = {
-            "/home/${userName}/.config/home-manager" = homeManagerConfig.out;
+          # Copy the Home Manager configuration into the container.
+          copyToRoot = {
+            "/home/${userName}/.config/home-manager" =
+              builtins.getAttr "out" homeManagerConfig;
           };
         };
       };
