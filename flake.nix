@@ -135,8 +135,7 @@
           };
           # Copy the Home Manager configuration into the container.
           copyToRoot = {
-            "/home/${userName}/.config/home-manager" =
-              builtins.getAttr "out" homeManagerConfig;
+            "/home/${userName}/.config/home-manager" = homeManagerConfig.outPath;
           };
         };
       };
