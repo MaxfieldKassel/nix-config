@@ -21,9 +21,8 @@
         rectangle
         maccy
         colima
-        whatsapp-for-mac
+       # whatsapp-for-mac
         libreoffice-bin
-
       ];
 
   system.activationScripts.preActivation = {
@@ -173,7 +172,7 @@
         "/System/Applications/FaceTime.app"
         "/System/Applications/Messages.app"
         "${signal-desktop}/Applications/Signal.app"
-        "${whatsapp-for-mac}/Applications/WhatsApp.app"
+       # "${whatsapp-for-mac}/Applications/WhatsApp.app"
         "/Applications/Spark Desktop.app"
         "/Applications/ChatGPT.app"
 
@@ -198,9 +197,9 @@
     screensaver.askForPasswordDelay = 0;
   };
 
-  launchd.daemons.colima = {
+  launchd.agents.colima = {
     script = ''
-      ${pkgs.colima}/bin/colima start --auto-start
+      ${pkgs.colima}/bin/colima start
     '';
     serviceConfig = {
       RunAtLoad = true;
