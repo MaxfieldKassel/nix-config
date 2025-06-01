@@ -41,11 +41,6 @@
     enable = true;
   };
 
-  programs.pay-respects = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
   programs.gh = {
     enable = true;
     extensions = [ pkgs.gh-copilot ];
