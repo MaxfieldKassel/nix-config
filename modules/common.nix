@@ -68,10 +68,9 @@
         [
           # GUI programs
           google-chrome
-          signal-desktop
-          synology-drive-client
           gimp
           brave
+	  vlc-bin
         ]
     );
 

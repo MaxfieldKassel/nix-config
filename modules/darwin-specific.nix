@@ -21,7 +21,6 @@
         rectangle
         maccy
         colima
-       # whatsapp-for-mac
         libreoffice-bin
       ];
 
@@ -171,8 +170,6 @@
         # Communication Apps
         "/System/Applications/FaceTime.app"
         "/System/Applications/Messages.app"
-        "${signal-desktop}/Applications/Signal.app"
-       # "${whatsapp-for-mac}/Applications/WhatsApp.app"
         "/Applications/Spark Desktop.app"
         "/Applications/ChatGPT.app"
 
