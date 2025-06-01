@@ -73,34 +73,15 @@
       defaults write org.p0deje.Maccy showInStatusBar -bool false
     '';
   };
-
-  # Try to install apps from the app store after the user has been activated
-  system.activationScripts.postUserActivation = {
-    enable = true;
-    text = ''
-      #!${pkgs.bash}/bin/bash
-      set -e
-
-      install_app_if_missing() {
-        local app_id=$1
-        local app_name=$2
-
-        if ! mas list | grep -q "^''${app_id} "; then
-          echo "Mas: Installing ''${app_name}..."
-          mas install "''${app_id}"
-        else
-          echo "Mas: ''${app_name} is already installed."
-        fi
-      }
-
-      # Install apps
-      install_app_if_missing 1195676848 "Grocery"
-      install_app_if_missing 6445813049 "Spark Desktop"
-      install_app_if_missing 904280696 "Things"
-      install_app_if_missing 1352778147 "Bitwarden"
-    '';
-  };
-
+  homebrew.enable = true;
+  homebrew.masApps = {
+  "Grocery"      = 1195676848;
+  "Spark Desktop" = 6445813049;
+  "Things"        = 904280696;
+  "Bitwarden"     = 1352778147;
+  "AutoMounter" = 1160435653;
+  "WireGuard" = 1451685025;
+};
   # Need to use this custom user preferences to set the Downloads and Documents folder in the dock
   # in order to save display settings for those folders in the dock. There is an open issue for this:
   # https://github.com/LnL7/nix-darwin/pull/1004
@@ -141,7 +122,7 @@
 
   # Enable sudo touch id authentication for easier password entry
   security.pam.services.sudo_local.touchIdAuth = true;
-
+  system.primaryUser = "maxkassel";
   # macOS defaults and services
   system.defaults = {
     controlcenter = {
