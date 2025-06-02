@@ -53,11 +53,14 @@
       ################################################################
       toggleterm-nvim # Floating terminal
       auto-session # Auto-save & restore sessions
+      autosave-nvim # Auto-save files
+
 
       ################################################################
       # Telescope Extras
       ################################################################
       telescope-fzf-native-nvim # Faster fuzzy search for Telescope
+      telescope-undo-nvim # Undo history search
 
       ################################################################
       # Github Copilot
@@ -118,6 +121,12 @@
       endfunction
       command! TrimWhitespace :call TrimTrailingWhitespace()
 
+      "==================================================="
+      "== Autosave settings                             =="
+      "==================================================="
+
+      " Enable auto-save plugin
+      
       "=================================================="
       "== LSP CONFIG                                   =="
       "=================================================="

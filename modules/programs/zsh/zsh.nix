@@ -98,6 +98,8 @@
       gitp = "git push";
       gitl = "git log";
       gitd = "git diff";
+
+      rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
     };
 
     history = {
