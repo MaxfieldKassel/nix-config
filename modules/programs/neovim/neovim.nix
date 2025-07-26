@@ -29,6 +29,7 @@
       vim-be-good # Fun practice plugin
       onedark-nvim # OneDark colorscheme (check if it provides "onedark" for lualine)
       nvim-fzf # Fuzzy finder for files 
+      hardtime-nvim # Forces better key usage
 
       ################################################################
       # UI Enhancements
@@ -108,9 +109,20 @@
       nnoremap <leader>gB :Gitsigns toggle_current_line_blame<CR>
       nnoremap <leader>gD :Gitsigns diffthis<CR>
 
+      " Tab management
+      nnoremap <leader>tn :tabnew
+      nnoremap <leader>to :tabonly
+      nnoremap <leader>tc :tabclose
+      nnoremap <leader>tm :tabmove
+      nnoremap <leader>tl :tabnext
+      nnoremap <leader>th :tabprevious
 
-
-
+      " Window management
+      nnoremap <leader>wv :vsplit<CR>
+      nnoremap <leader>ws :split<CR>
+      nnoremap <leader>ww :wincmd w<CR>
+      " open a floating terminal
+      nnoremap <leader>wt :ToggleTerm<CR>
       inoremap jk <Esc>
 
       " Function to trim trailing whitespace
@@ -120,13 +132,31 @@
         call winrestview(l:save)
       endfunction
       command! TrimWhitespace :call TrimTrailingWhitespace()
-
+      
       "==================================================="
       "== Autosave settings                             =="
       "==================================================="
 
-      " Enable auto-save plugin
-      
+      " Enable autosave to automatically save files 
+      lua << EOF
+	require("autosave").setup {
+	  enabled = true,
+	  execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
+	  events = {"InsertLeave", "TextChanged"},
+	  conditions = {
+	    exists = true,
+	    filetype_is_not = {"gitcommit", "markdown"},
+	    modifiable = true,
+	  },
+	  write_all_buffers = false,
+	}
+      EOF
+
+      "==================================================="
+      "== Vim Hardtime settings                         =="
+      "==================================================="
+
+
       "=================================================="
       "== LSP CONFIG                                   =="
       "=================================================="
@@ -153,10 +183,12 @@
       EOF
 
       " Auto-open nvim-tree (like VSCode explorer) at startup
+      lua << EOF
       augroup open_nvim_tree
         autocmd!
         autocmd VimEnter * NvimTreeOpen
       augroup END
+      EOF
 
       "=================================================="
       "== UI ENHANCEMENTS                              =="
@@ -206,8 +238,6 @@
       "=================================================="
       lua << EOF
         require('telescope').load_extension('fzf')
-
-
       EOF
 
       "=================================================="
