@@ -59,7 +59,7 @@
 
       # Pretty fancy and modern terminal file manager
       # https://github.com/yorukot/superfile
-      superfile
+      # superfile
     ]
     ++ (
       if variables.isHeadless then
