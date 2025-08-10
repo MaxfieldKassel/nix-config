@@ -34,6 +34,10 @@
       # Vim keybindings for vscode
       # https://marketplace.visualstudio.com/items?itemName=vscodevim.vim
       vscodevim.vim
+
+      # Terraform support for vscode
+      # https://marketplace.visualstudio.com/items?itemName=hashicorp.terraform
+      hashicorp.terraform
     ];
 
     # VSCode settings

@@ -63,14 +63,17 @@
     ]
     ++ (
       if variables.isHeadless then
-        [ ]
+        [ 
+          terraform
+          terraform-providers.proxmox
+        ]
       else
         [
           # GUI programs
           google-chrome
           gimp
           brave
-	  vlc-bin
+	        vlc-bin
         ]
     );
 
