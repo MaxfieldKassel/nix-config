@@ -28,7 +28,7 @@
       vim-surround # Surround text manipulation
       vim-be-good # Fun practice plugin
       onedark-nvim # OneDark colorscheme (check if it provides "onedark" for lualine)
-      nvim-fzf # Fuzzy finder for files 
+      nvim-fzf # Fuzzy finder for files
       hardtime-nvim # Forces better key usage
 
       ################################################################
@@ -55,7 +55,6 @@
       toggleterm-nvim # Floating terminal
       auto-session # Auto-save & restore sessions
       autosave-nvim # Auto-save files
-
 
       ################################################################
       # Telescope Extras
@@ -89,7 +88,7 @@
       nnoremap <leader>fg :Telescope live_grep<CR>
       nnoremap <leader>fb :Telescope buffers<CR>
       nnoremap <leader>fh :Telescope help_tags<CR>
-      
+
 
       " Git keybindings
       nnoremap <leader>gc :Git commit<CR>
@@ -132,24 +131,24 @@
         call winrestview(l:save)
       endfunction
       command! TrimWhitespace :call TrimTrailingWhitespace()
-      
+
       "==================================================="
       "== Autosave settings                             =="
       "==================================================="
 
       " Enable autosave to automatically save files 
       lua << EOF
-	require("autosave").setup {
-	  enabled = true,
-	  execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
-	  events = {"InsertLeave", "TextChanged"},
-	  conditions = {
-	    exists = true,
-	    filetype_is_not = {"gitcommit", "markdown"},
-	    modifiable = true,
-	  },
-	  write_all_buffers = false,
-	}
+      require("autosave").setup {
+        enabled = true,
+        execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
+        events = {"InsertLeave", "TextChanged"},
+        conditions = {
+          exists = true,
+          filetype_is_not = {"gitcommit", "markdown"},
+          modifiable = true,
+        },
+        write_all_buffers = false,
+      }
       EOF
 
       "==================================================="
@@ -183,12 +182,11 @@
       EOF
 
       " Auto-open nvim-tree (like VSCode explorer) at startup
-      lua << EOF
       augroup open_nvim_tree
         autocmd!
         autocmd VimEnter * NvimTreeOpen
       augroup END
-      EOF
+
 
       "=================================================="
       "== UI ENHANCEMENTS                              =="

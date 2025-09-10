@@ -60,20 +60,23 @@
       # Pretty fancy and modern terminal file manager
       # https://github.com/yorukot/superfile
       # superfile
+
+      terraform
+      terraform-providers.proxmox
+
+      devenv
+
     ]
     ++ (
       if variables.isHeadless then
-        [ 
-          terraform
-          terraform-providers.proxmox
-        ]
+        [ ]
       else
         [
           # GUI programs
           google-chrome
           gimp
           brave
-	        vlc-bin
+          vlc-bin
         ]
     );
 
