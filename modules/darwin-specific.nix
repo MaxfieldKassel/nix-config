@@ -1,8 +1,9 @@
-{ config
-, userName
-, pkgs
-, variables
-, ...
+{
+  config,
+  userName,
+  pkgs,
+  variables,
+  ...
 }: {
   users.users."${userName}" = {
     home = "/Users/${userName}";
@@ -10,7 +11,7 @@
 
   environment.systemPackages = with pkgs;
     if variables.isHeadless
-    then [ ]
+    then []
     else [
       mas
       rectangle

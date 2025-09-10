@@ -1,8 +1,9 @@
-{ pkgs, variables, ... }:
-
 {
-  environment.systemPackages =
-    with pkgs;
+  pkgs,
+  variables,
+  ...
+}: {
+  environment.systemPackages = with pkgs;
     [
       docker
       docker-compose
@@ -65,26 +66,24 @@
       terraform-providers.proxmox
 
       devenv
-
     ]
     ++ (
-      if variables.isHeadless then
-        [ ]
-      else
-        [
-          # GUI programs
-          google-chrome
-          gimp
-          brave
-          vlc-bin
-        ]
+      if variables.isHeadless
+      then []
+      else [
+        # GUI programs
+        google-chrome
+        gimp
+        brave
+        vlc-bin
+      ]
     );
 
   # A list of all nerd fonts are found here:
   # https://www.nerdfonts.com/font-downloads
   # Nerd fonts need to be used to ensure that all
   # symbols are able to be used in the CLI.
-  fonts.packages = [ pkgs.nerd-fonts.hack ];
+  fonts.packages = [pkgs.nerd-fonts.hack];
   #! If this changes make sure to change vscode.nix and kitty.nix
 
   # This is required for programs such as google-chrome and others.

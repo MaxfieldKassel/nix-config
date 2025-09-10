@@ -1,7 +1,5 @@
-{ pkgs }:
-{
+{pkgs}: {
   programs.vscode = {
-
     enable = true;
 
     # Add Nix-related extensions

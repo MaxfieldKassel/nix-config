@@ -1,4 +1,4 @@
-{ pkgs }: {
+{pkgs}: {
   programs.bat = {
     enable = true;
   };
@@ -16,7 +16,7 @@
     colors = "always";
     icons = "always";
     git = true;
-    extraOptions = [ "-h" ];
+    extraOptions = ["-h"];
   };
 
   programs.zoxide = {
@@ -27,7 +27,7 @@
   programs.atuin = {
     enable = true;
     enableZshIntegration = true;
-    flags = [ "--disable-up-arrow" ];
+    flags = ["--disable-up-arrow"];
   };
 
   programs.fzf = {
@@ -41,7 +41,7 @@
 
   programs.gh = {
     enable = true;
-    extensions = [ pkgs.gh-copilot ];
+    extensions = [pkgs.gh-copilot];
   };
 
   programs.btop = {

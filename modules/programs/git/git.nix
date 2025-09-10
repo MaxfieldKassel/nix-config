@@ -1,10 +1,9 @@
-{ pkgs }:
-{
+{pkgs}: {
   programs.git = {
     enable = true;
     lfs.enable = true;
     delta.enable = true;
-    
+
     userName = "Maxfield Kassel"; # Replace this with your git username
     userEmail = "106034283+MaxfieldKassel@users.noreply.github.com"; # Replace this with your github email
     extraConfig = {
@@ -13,7 +12,7 @@
       init.defaultBranch = "main";
       fetch.prune = true;
       pull.rebase = true;
-      
+
       push.autoSetupRemote = true;
       push.default = "simple"; # Only push current branch
 

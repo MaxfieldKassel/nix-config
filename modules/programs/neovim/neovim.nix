@@ -1,5 +1,4 @@
-{ pkgs }:
-{
+{pkgs}: {
   programs.neovim = {
     # Enable Neovim, aliases, and optionally set it as the default editor
     enable = true;
@@ -136,7 +135,7 @@
       "== Autosave settings                             =="
       "==================================================="
 
-      " Enable autosave to automatically save files 
+      " Enable autosave to automatically save files
       lua << EOF
       require("autosave").setup {
         enabled = true,

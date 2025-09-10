@@ -1,9 +1,10 @@
-{ pkgs, variables, ... }:
-
-let
-  hasGUI = !variables.isHeadless;
-in
 {
+  pkgs,
+  variables,
+  ...
+}: let
+  hasGUI = !variables.isHeadless;
+in {
   # Define the user
   users.users.${variables.userName} = {
     isNormalUser = true;
@@ -28,7 +29,6 @@ in
     libreoffice
     whatsapp-for-linux
   ];
-
 
   # System hostname
   networking.hostName = variables.hostName;
@@ -63,13 +63,12 @@ in
 
   # Conditional X11 keymap
   services.xserver.xkb =
-    if hasGUI then
-      {
-        layout = "us";
-        variant = "";
-      }
-    else
-      null;
+    if hasGUI
+    then {
+      layout = "us";
+      variant = "";
+    }
+    else null;
 
   # Conditional printing service
   services.printing.enable = hasGUI;
