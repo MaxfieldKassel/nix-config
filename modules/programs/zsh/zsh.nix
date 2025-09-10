@@ -1,6 +1,4 @@
-{ pkgs }:
-{
-
+{ pkgs }: {
   programs.bat = {
     enable = true;
   };
@@ -62,6 +60,11 @@
     enable = true;
     enableZshIntegration = true;
     nix-direnv.enable = true;
+    silent = true; # Do not print loading messages
+  };
+
+  programs.lazygit = {
+    enable = true;
   };
 
   programs.zsh = {
@@ -100,6 +103,7 @@
       gitd = "git diff";
 
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
+      lg = "lazygit";
     };
 
     history = {
@@ -127,9 +131,9 @@
           fi
 
           # If any part of the command fails, return an error.
-          set -e 
+          set -e
 
-          mkdir -p "$1" && cd "$1" 
+          mkdir -p "$1" && cd "$1"
 
           nix flake new -t "github:nix-community/nix-direnv" .
           nix flake update
@@ -300,7 +304,7 @@
           out=$(MANWIDTH=$FZF_PREVIEW_COLUMNS man "$word" 2>/dev/null) && echo "$out"
         ) || (
           out=$(which "$word" 2>/dev/null) && echo "$out"
-        ) || echo "''${(P)word}" 
+        ) || echo "''${(P)word}"
         '
 
       # Use default FZF options if desired
