@@ -69,15 +69,15 @@
       defaults write org.p0deje.Maccy showInStatusBar -bool false
     '';
   };
-  homebrew.enable = true;
-  homebrew.masApps = {
-    "Grocery" = 1195676848;
-    "Spark Desktop" = 6445813049;
-    "Things" = 904280696;
-    "Bitwarden" = 1352778147;
-    "AutoMounter" = 1160435653;
-    "WireGuard" = 1451685025;
-  };
+  # homebrew.enable = true;
+  # homebrew.masApps = {
+  #   "Grocery" = 1195676848;
+  #   "Spark Desktop" = 6445813049;
+  #   "Things" = 904280696;
+  #   "Bitwarden" = 1352778147;
+  #   "AutoMounter" = 1160435653;
+  #   "WireGuard" = 1451685025;
+  # };
   # Need to use this custom user preferences to set the Downloads and Documents folder in the dock
   # in order to save display settings for those folders in the dock. There is an open issue for this:
   # https://github.com/LnL7/nix-darwin/pull/1004
