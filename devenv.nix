@@ -15,4 +15,5 @@
     language = "system";
     pass_filenames = false;
   };
+  languages.nix.enable = true;
 }
