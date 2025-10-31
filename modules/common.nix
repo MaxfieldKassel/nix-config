@@ -73,7 +73,7 @@
       else [
         # GUI programs
         google-chrome
-        gimp
+        #gimp
         brave
         vlc-bin
       ]
