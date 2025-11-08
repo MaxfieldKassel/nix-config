@@ -174,7 +174,7 @@
 
       # Keyboard discipline
       hardtime = {
-        enable = true;
+        enable = false;
       };
 
       # Commenting, pairs, etc.
