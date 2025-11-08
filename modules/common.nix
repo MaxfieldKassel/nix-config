@@ -62,9 +62,6 @@
       # https://github.com/yorukot/superfile
       # superfile
 
-      terraform
-      terraform-providers.proxmox
-
       devenv
     ]
     ++ (

@@ -1,271 +1,230 @@
 {pkgs}: {
-  programs.neovim = {
-    # Enable Neovim, aliases, and optionally set it as the default editor
+  programs.nixvim = {
     enable = true;
+
+    # Make Neovim the default editor
+    defaultEditor = true;
     viAlias = true;
     vimAlias = true;
-    defaultEditor = true;
 
-    #
-    # 1. Plugins
-    #
-    plugins = with pkgs.vimPlugins; [
-      ################################################################
-      # Base / Default Plugins
-      ################################################################
-      nvim-tree-lua # File explorer
-      telescope-nvim # Fuzzy finder
-      nvim-lspconfig # LSP configuration
-      lualine-nvim # Statusline
-      nvim-treesitter # Syntax highlighting
-      nvim-colorizer-lua # Color highlighter
-      comment-nvim # Comment toggling (gc to comment lines)
-      gitsigns-nvim # Git integration (signs in the gutter)
-      indent-blankline-nvim # Indentation guides
-      nvim-autopairs # Auto-close pairs
-      which-key-nvim # Keybinding helper
-      vim-surround # Surround text manipulation
-      vim-be-good # Fun practice plugin
-      onedark-nvim # OneDark colorscheme (check if it provides "onedark" for lualine)
-      nvim-fzf # Fuzzy finder for files
-      hardtime-nvim # Forces better key usage
+    # ======================================================
+    # 1. UI & Core Options
+    # ======================================================
+    opts = {
+      number = true;
+      relativenumber = true;
+      mouse = "a";
+      termguicolors = true;
+      listchars = "tab:→ ,space:·,trail:•,eol:¶";
+      showmode = true;
+      cursorline = true;
+      sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions";
+    };
 
-      ################################################################
-      # UI Enhancements
-      ################################################################
-      cinnamon-nvim # Smooth scrolling
-      hop-nvim # Faster cursor motions
-      twilight-nvim # Dim out inactive code
-      mini-indentscope # Enhanced indent scope visualization
-      nvim-web-devicons # Icons for statusline, file explorer, etc.
-      mini-nvim # For mini.plugins like mini.icons, etc.
-
-      ################################################################
-      # Git Enhancements
-      ################################################################
-      diffview-nvim # Modern Git diff interface
-      vim-fugitive # Essential Git commands in Neovim
-      git-messenger-vim # Show commit messages in a floating window
-      gitsigns-nvim # Git signs in the gutter
-
-      ################################################################
-      # Terminal & Sessions
-      ################################################################
-      toggleterm-nvim # Floating terminal
-      auto-session # Auto-save & restore sessions
-      autosave-nvim # Auto-save files
-
-      ################################################################
-      # Telescope Extras
-      ################################################################
-      telescope-fzf-native-nvim # Faster fuzzy search for Telescope
-      telescope-undo-nvim # Undo history search
-
-      ################################################################
-      # Github Copilot
-      ################################################################
-      copilot-vim # Github Copilot
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>ff";
+        action = "<cmd>Telescope find_files<CR>";
+        options = {
+          desc = "Find files";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fg";
+        action = "<cmd>Telescope live_grep<CR>";
+        options = {
+          desc = "Live grep";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fb";
+        action = "<cmd>Telescope buffers<CR>";
+        options = {
+          desc = "Find buffer";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>fh";
+        action = "<cmd>Telescope help_tags<CR>";
+        options = {
+          desc = "Find help";
+        };
+      }
+      {
+        mode = "i";
+        key = "jk";
+        action = "<Esc>";
+        options = {
+          desc = "Exit insert mode";
+        };
+      }
     ];
 
-    #
-    # 2. Neovim Configuration
-    #
-    extraConfig = ''
-      "=================================================="
-      "== BASIC EDITOR SETTINGS                        =="
-      "=================================================="
-      set number
-      set relativenumber
-      set mouse=a
-      set termguicolors
-      set listchars=tab:→\ ,space:·,trail:•,eol:¶
-      set showmode
-      set cursorline
+    # ======================================================
+    # 2. Plugins
+    # ======================================================
+    plugins = {
+      # Explicitly enable web-devicons to remove the warning
+      web-devicons = {
+        enable = true;
+      };
 
-      " Basic keybindings
-      nnoremap <leader>ff :Telescope find_files<CR>
-      nnoremap <leader>fg :Telescope live_grep<CR>
-      nnoremap <leader>fb :Telescope buffers<CR>
-      nnoremap <leader>fh :Telescope help_tags<CR>
-
-
-      " Git keybindings
-      nnoremap <leader>gc :Git commit<CR>
-      nnoremap <leader>gs :Git status<CR>
-      nnoremap <leader>gd :Git diff<CR>
-      nnoremap <leader>gt :Git blame<CR>
-      nnoremap <leader>gl :Git log<CR>
-      nnoremap <leader>gR :Git rebase<CR>
-      nnoremap <leader>gS :Git stash<CR>
-      nnoremap <leader>gP :Git push<CR>
-      nnoremap <leader>gC :Git checkout<CR>
-      nnoremap <leader>gA :Git add .<CR>
-
-
-      " Git signs keybindings
-      nnoremap <leader>gH :Gitsigns preview_hunk<CR>
-      nnoremap <leader>gB :Gitsigns toggle_current_line_blame<CR>
-      nnoremap <leader>gD :Gitsigns diffthis<CR>
-
-      " Tab management
-      nnoremap <leader>tn :tabnew
-      nnoremap <leader>to :tabonly
-      nnoremap <leader>tc :tabclose
-      nnoremap <leader>tm :tabmove
-      nnoremap <leader>tl :tabnext
-      nnoremap <leader>th :tabprevious
-
-      " Window management
-      nnoremap <leader>wv :vsplit<CR>
-      nnoremap <leader>ws :split<CR>
-      nnoremap <leader>ww :wincmd w<CR>
-      " open a floating terminal
-      nnoremap <leader>wt :ToggleTerm<CR>
-      inoremap jk <Esc>
-
-      " Function to trim trailing whitespace
-      function! TrimTrailingWhitespace()
-        let l:save = winsaveview()
-        %s/\\s\\+$//e
-        call winrestview(l:save)
-      endfunction
-      command! TrimWhitespace :call TrimTrailingWhitespace()
-
-      "==================================================="
-      "== Autosave settings                             =="
-      "==================================================="
-
-      " Enable autosave to automatically save files
-      lua << EOF
-      require("autosave").setup {
-        enabled = true,
-        execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
-        events = {"InsertLeave", "TextChanged"},
-        conditions = {
-          exists = true,
-          filetype_is_not = {"gitcommit", "markdown"},
-          modifiable = true,
-        },
-        write_all_buffers = false,
-      }
-      EOF
-
-      "==================================================="
-      "== Vim Hardtime settings                         =="
-      "==================================================="
-
-
-      "=================================================="
-      "== LSP CONFIG                                   =="
-      "=================================================="
-      lua << EOF
-        local lspconfig = require('lspconfig')
-        -- Example LSP servers:
-        lspconfig.pyright.setup({})
-        lspconfig.ts_ls.setup({})
-      EOF
-
-      "=================================================="
-      "== NVIM-TREE CONFIG                             =="
-      "=================================================="
-      lua << EOF
-        require('nvim-tree').setup {
-          view = {
-            width = 30,
-            side = 'left',
-          },
-          filters = {
-            dotfiles = false,
-          },
-        }
-      EOF
-
-      " Auto-open nvim-tree (like VSCode explorer) at startup
-      augroup open_nvim_tree
-        autocmd!
-        autocmd VimEnter * NvimTreeOpen
-      augroup END
-
-
-      "=================================================="
-      "== UI ENHANCEMENTS                              =="
-      "=================================================="
-      lua << EOF
-        -- Smooth scrolling
-        require('cinnamon').setup()
-
-        -- Hop for faster motions
-        require('hop').setup()
-
-        -- Twilight (dims inactive code)
-        require('twilight').setup()
-
-        -- mini.indentscope for indent guides
-        require('mini.indentscope').setup()
-
-        -- Git signs in the gutter
-        require('gitsigns').setup()
-      EOF
-
-      "=================================================="
-      "== LUALINE (STATUSLINE)                         =="
-      "=================================================="
-      lua << EOF
-        require('lualine').setup {
+      # Statusline
+      lualine = {
+        enable = true;
+        settings = {
           options = {
-            -- If your installed OneDark plugin truly provides a "onedark" theme:
-            -- theme = 'onedark',
-
-            -- Otherwise, fallback to "auto" to avoid warnings
-            theme = 'auto',
-          },
+            theme = "auto";
+          };
           sections = {
-            lualine_a = {'mode'},
-            lualine_b = {'branch', 'diff', 'diagnostics'},
-            lualine_c = {'filename'},
-            lualine_x = {'encoding', 'fileformat', 'filetype'},
-            lualine_y = {'progress'},
-            lualine_z = {'location'},
-          },
-        }
-      EOF
+            lualine_a = ["mode"];
+            lualine_b = [
+              "branch"
+              "diff"
+              "diagnostics"
+            ];
+            lualine_c = ["filename"];
+            lualine_x = [
+              "encoding"
+              "fileformat"
+              "filetype"
+            ];
+            lualine_y = ["progress"];
+            lualine_z = ["location"];
+          };
+        };
+      };
 
-      "=================================================="
-      "== TELESCOPE FZF (FASTER SEARCH)                =="
-      "=================================================="
-      lua << EOF
-        require('telescope').load_extension('fzf')
-      EOF
+      # Treesitter
+      treesitter.enable = true;
 
-      "=================================================="
-      "== TOGGLETERM (FLOATING TERMINAL)               =="
-      "=================================================="
-      lua << EOF
-        require("toggleterm").setup{
-          open_mapping = [[<C-\\>]],
-          direction = 'float',
+      # File Explorer
+      nvim-tree = {
+        enable = true;
+        settings = {
+          view = {
+            width = 30;
+            side = "left";
+          };
+          filters = {
+            dotfiles = false;
+          };
+        };
+      };
+
+      # Telescope
+      telescope = {
+        enable = true;
+        extensions = {
+          "fzf-native".enable = true;
+          undo.enable = true;
+        };
+      };
+
+      # LSP
+      lsp = {
+        enable = true;
+        servers = {
+          pyright = {
+            enable = true;
+          };
+          ts_ls = {
+            enable = true;
+          };
+          # rust_analyzer = {
+          #   enable = true;
+          # };
+          nixd = {
+            enable = true;
+          };
+          terraform_lsp = {
+            enable = true;
+          };
+        };
+      };
+
+      # Git
+      gitsigns.enable = true;
+      fugitive.enable = true;
+      diffview.enable = true;
+
+      # Terminal
+      toggleterm = {
+        enable = true;
+        settings = {
+          direction = "float";
           float_opts = {
-            border = 'curved',
-          },
-        }
-      EOF
+            border = "curved";
+          };
+        };
+      };
 
+      # Autosave
+      "auto-save" = {
+        enable = true;
+        settings = {
+          write_all_buffers = false;
+          debounce_delay = 1000;
+        };
+      };
 
-      "=================================================="
-      "== AUTO-SESSION (SESSION MANAGEMENT)            =="
-      "=================================================="
-      lua << EOF
-        -- Add localoptions to fix auto-session warnings
-        vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+      # Keyboard discipline
+      hardtime = {
+        enable = true;
+      };
 
-        require("auto-session").setup {
-          log_level = "info",
-          auto_session_suppress_dirs = { "~/" },
-          auto_session_create_enabled = true,
-          auto_save_enabled = true,
-          auto_restore_enabled = true,
-        }
-      EOF
-    '';
+      # Commenting, pairs, etc.
+      comment = {
+        enable = true;
+      };
+      vim-surround = {
+        enable = true;
+      };
+      which-key = {
+        enable = true;
+      };
+
+      # UI niceties
+      hop = {
+        enable = true;
+      };
+      twilight = {
+        enable = true;
+      };
+      mini = {
+        enable = true;
+        modules = {
+          indentscope = {
+            enable = true;
+          };
+        };
+      };
+
+      # Auto-session
+      "auto-session" = {
+        enable = true;
+        settings = {
+          log_level = "info";
+          auto_save_enabled = true;
+          auto_restore_enabled = true;
+          auto_session_create_enabled = true;
+          auto_session_suppress_dirs = ["~/"];
+        };
+      };
+    };
+
+    # ======================================================
+    # 3. Autocommands
+    # ======================================================
+    autoCmd = [
+      {
+        event = "VimEnter";
+        command = "NvimTreeOpen";
+      }
+    ];
   };
 }

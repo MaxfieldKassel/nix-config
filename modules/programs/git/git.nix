@@ -1,33 +1,47 @@
-{pkgs}: {
+{pkgs, ...}: {
   programs.git = {
     enable = true;
     lfs.enable = true;
-    delta.enable = true;
 
-    userName = "Maxfield Kassel"; # Replace this with your git username
-    userEmail = "106034283+MaxfieldKassel@users.noreply.github.com"; # Replace this with your github email
-    extraConfig = {
+    # NEW: put user, core, init, etc. under `settings`
+    settings = {
+      user.name = "Maxfield Kassel";
+      user.email = "106034283+MaxfieldKassel@users.noreply.github.com";
+
       core.editor = "nvim";
-
       init.defaultBranch = "main";
       fetch.prune = true;
       pull.rebase = true;
-
       push.autoSetupRemote = true;
-      push.default = "simple"; # Only push current branch
+      push.default = "simple";
 
-      alias.co = "checkout";
-      alias.b = "branch";
-      alias.c = "commit";
-      alias.s = "status";
-      alias.unstage = "reset HEAD --";
-      alias.last = "log -1 HEAD";
-      alias.graph = "log --all --graph --oneline --decorate";
-      alias.lg = "log --oneline --decorate";
+      aliases = {
+        co = "checkout";
+        b = "branch";
+        c = "commit";
+        s = "status";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        graph = "log --all --graph --oneline --decorate";
+        lg = "log --oneline --decorate";
+      };
     };
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
 
   programs.lazygit = {
     enable = true;
+    enableZshIntegration = false;
+    settings = {
+      git = {
+        pagers = [
+          {pager = "delta --paging=never";}
+        ];
+      };
+    };
   };
 }

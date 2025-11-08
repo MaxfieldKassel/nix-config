@@ -9,6 +9,10 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -17,6 +21,7 @@
     nix-darwin,
     home-manager,
     mac-app-util,
+    nixvim,
     ...
   }: let
     # Import frequently changed variables
@@ -50,18 +55,27 @@
                 ...
               }:
                 import ./modules/darwin-specific.nix {
-                  inherit config userName pkgs variables;
+                  inherit
+                    config
+                    userName
+                    pkgs
+                    variables
+                    ;
                 }
             )
             home-manager.darwinModules.home-manager
             {
               home-manager.users."${userName}" = {
-                imports = [./modules/home.nix];
+                imports = [
+                  ./modules/home.nix
+                  nixvim.homeModules.nixvim
+                ];
                 home.username = userName;
                 home.homeDirectory = "/Users/${userName}";
               };
             }
             mac-app-util.darwinModules.default # Add mac-app-util module
+            # Add nixvim module
           ];
         };
       }
