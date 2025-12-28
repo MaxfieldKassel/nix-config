@@ -71,7 +71,7 @@
         # GUI programs
         google-chrome
         #gimp
-        brave
+        # brave
         vlc-bin
       ]
     );
