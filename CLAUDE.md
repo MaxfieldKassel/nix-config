@@ -44,9 +44,9 @@ nix flake check
 
 **`modules/linux-specific.nix`** — NixOS-only configuration.
 
-**`modules/home.nix`** — Home-manager entry point. Dynamically imports each program module from `modules/programs/<name>/<name>.nix` and merges their `programs` attrsets. To add a new program, add its name to the `programNames` list.
+**`modules/home.nix`** — Home-manager entry point. Auto-imports every `.nix` file found in `modules/programs/` using `builtins.readDir`. To add a new program, just create a file there.
 
-**`modules/programs/<name>/<name>.nix`** — Each program module returns `{ programs.<name> = { ... }; }` for home-manager consumption.
+**`modules/programs/<name>.nix`** — Each program module is a standard home-manager module (receives `pkgs`, `lib`, `variables`, etc.).
 
 ## Pre-commit Hooks (via devenv)
 

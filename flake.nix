@@ -67,7 +67,10 @@
             {
               home-manager.extraSpecialArgs = {inherit variables;};
               home-manager.users."${variables.userName}" = {
-                imports = [./modules/home.nix];
+                imports = [
+                  ./modules/home.nix
+                  nixvim.homeModules.nixvim
+                ];
                 home.username = variables.userName;
                 home.homeDirectory = "/home/${variables.userName}";
               };
@@ -75,6 +78,35 @@
           ];
       };
   in {
+    devShells = let
+      systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    in
+      lib.genAttrs systems (system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            git
+            lazygit
+            neovim
+            ripgrep
+            fzf
+            bat
+            eza
+            zoxide
+            atuin
+            btop
+            fastfetch
+            claude-code
+          ];
+          shellHook = ''
+            export EDITOR=nvim
+            export SHELL=${pkgs.zsh}/bin/zsh
+            exec ${pkgs.zsh}/bin/zsh
+          '';
+        };
+      });
+
     darwinConfigurations =
       lib.mapAttrs mkDarwinSystem
       (lib.filterAttrs (_: v: isDarwin v.system) hosts);

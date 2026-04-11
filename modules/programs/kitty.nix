@@ -94,7 +94,6 @@
       "super+shift+t" = "launch --type=tab --cwd=current";
       "super+t" = "launch --type=tab --cwd=current";
 
-      "kitty_mod+." = ''echo "TEST"'';
       "kitty_mod+," = "launch --type=window nvim ~/.config/kitty/kitty.conf";
     };
   };

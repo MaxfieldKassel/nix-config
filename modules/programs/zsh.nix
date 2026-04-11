@@ -68,10 +68,6 @@
     silent = true; # Do not print loading messages
   };
 
-  programs.lazygit = {
-    enable = true;
-  };
-
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -100,13 +96,6 @@
 
         # Override of ping
         ping = "gping";
-
-        # Git aliases
-        gits = "git status";
-        gitc = "git commit";
-        gitp = "git push";
-        gitl = "git log";
-        gitd = "git diff";
 
         lg = "lazygit";
         neofetch = "fastfetch";
@@ -140,7 +129,7 @@
           fi
 
           # If any part of the command fails, return an error.
-          set -e
+          setopt LOCAL_OPTIONS ERR_EXIT
 
           mkdir -p "$1" && cd "$1"
 
@@ -161,35 +150,6 @@
 
       # VSCode shell integration
       [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-
-      ############################################################################
-      ###################### Start devcontainer integration ######################
-      ############################################################################
-
-      # Check to see if there is a dev container in that folder.
-      # If so, prompt the user and then enter the dev container.
-      function enter_devcontainer {
-          if [ -d ".devcontainer" ]; then
-              echo -n "Dev Container detected. Start environment? (y/n): "
-              read response
-              if [[ "$response" =~ ^[Yy]$ ]]; then
-                  # Start the dev container
-                  devcontainer up --workspace-folder "$(pwd)" > /dev/null 2>&1
-
-                  # Attach to the dev container using devcontainer exec
-                  devcontainer exec --workspace-folder "$(pwd)" /bin/bash
-              fi
-          fi
-      }
-
-
-      # Hook for entering folders
-      function chpwd() {
-          enter_devcontainer
-      }
-
-      # Trigger on shell startup
-      enter_devcontainer
 
       ############################################################################
       ### The following config are dedicated to improving tab usability in zsh ###
