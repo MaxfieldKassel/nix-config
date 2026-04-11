@@ -33,10 +33,8 @@
       # https://github.com/tldr-pages/tlrc
       tlrc
 
-      # Although Neofetch is archived, it is still stable
-      # (for now) and should not need updates
-      # https://github.com/dylanaraps/neofetch
-      neofetch
+      # Fastfetch is a replacement for neofetch
+      fastfetch
 
       # Allows for opening dev containers in the cli without vscode.
       # https://containers.dev
@@ -63,6 +61,8 @@
       # superfile
 
       devenv
+
+      claude-code
     ]
     ++ (
       if variables.isHeadless

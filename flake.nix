@@ -5,10 +5,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
-    mac-app-util.url = "github:hraban/mac-app-util";
+    # mac-app-util.url = "github:hraban/mac-app-util";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
+    # mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +20,7 @@
     nixpkgs,
     nix-darwin,
     home-manager,
-    mac-app-util,
+    # mac-app-util,
     nixvim,
     ...
   }: let
@@ -74,7 +74,7 @@
                 home.homeDirectory = "/Users/${userName}";
               };
             }
-            mac-app-util.darwinModules.default # Add mac-app-util module
+            # mac-app-util.darwinModules.default # Add mac-app-util module
             # Add nixvim module
           ];
         };

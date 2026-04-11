@@ -147,7 +147,7 @@
         "/System/Applications/FaceTime.app"
         "/System/Applications/Messages.app"
         "/Applications/Spark Desktop.app"
-        "/Applications/ChatGPT.app"
+        "/Applications/Claude.app"
 
         # Productivity Tools
         "${vscode}/Applications/Visual Studio Code.app"
@@ -170,10 +170,12 @@
     screensaver.askForPasswordDelay = 0;
   };
 
-  nix.settings.trusted-users = [
-    "root"
-    "${userName}"
-  ];
+  # nix.settings.trusted-users = [
+  #   "root"
+  #   "${userName}"
+  # ];
+  # Disable management since I am using determinate nix
+  nix.enable = false;
 
   launchd.agents.colima = {
     script = ''

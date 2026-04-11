@@ -41,7 +41,7 @@
 
   programs.gh = {
     enable = true;
-    extensions = [pkgs.gh-copilot];
+    extensions = [pkgs.github-copilot-cli];
   };
 
   programs.btop = {
@@ -104,6 +104,7 @@
 
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
       lg = "lazygit";
+      neofetch = "fastfetch";
     };
 
     history = {
