@@ -1,12 +1,11 @@
-{pkgs, ...}: {
+{variables, ...}: {
   programs.git = {
     enable = true;
     lfs.enable = true;
 
-    # NEW: put user, core, init, etc. under `settings`
     settings = {
-      user.name = "Maxfield Kassel";
-      user.email = "106034283+MaxfieldKassel@users.noreply.github.com";
+      user.name = variables.gitName;
+      user.email = variables.gitEmail;
 
       core.editor = "nvim";
       init.defaultBranch = "main";

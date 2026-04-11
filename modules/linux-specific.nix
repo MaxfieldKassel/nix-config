@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   variables,
   ...
@@ -61,14 +62,10 @@ in {
   services.xserver.displayManager.gdm.enable = hasGUI;
   services.xserver.desktopManager.gnome.enable = hasGUI;
 
-  # Conditional X11 keymap
-  services.xserver.xkb =
-    if hasGUI
-    then {
-      layout = "us";
-      variant = "";
-    }
-    else null;
+  services.xserver.xkb = lib.mkIf hasGUI {
+    layout = "us";
+    variant = "";
+  };
 
   # Conditional printing service
   services.printing.enable = hasGUI;

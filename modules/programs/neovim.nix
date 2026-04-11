@@ -1,4 +1,4 @@
-{pkgs}: {
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     viAlias = true;
@@ -42,8 +42,8 @@
       auto-session
       autosave-nvim
 
-      # Copilot
-      copilot-vim
+      # Claude Code
+      claudecode-nvim
     ];
 
     initLua = ''
@@ -98,9 +98,12 @@
         vim.fn.winrestview(view)
       end, {})
 
-      -- Auto-open file explorer
+      -- Auto-open file explorer (without focusing it)
       vim.api.nvim_create_autocmd('VimEnter', {
-        callback = function() vim.cmd('NvimTreeOpen') end,
+        callback = function()
+          vim.cmd('NvimTreeOpen')
+          vim.cmd('wincmd p')
+        end,
       })
 
       -- Autosave
@@ -161,6 +164,19 @@
         direction = 'float',
         float_opts = { border = 'curved' },
       }
+
+      -- Claude Code
+      require("claudecode").setup()
+      map('n', '<leader>ac', '<cmd>ClaudeCode<CR>')
+      map('v', '<leader>as', '<cmd>ClaudeCodeSend<CR>')
+
+      -- Which-key
+      require('which-key').setup()
+      require('which-key').add({
+        { '<leader>a', group = 'AI / Claude' },
+        { '<leader>ac', desc = 'Open Claude Code' },
+        { '<leader>as', desc = 'Send selection', mode = 'v' },
+      })
 
       -- Session management
       vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"

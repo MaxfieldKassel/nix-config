@@ -1,10 +1,11 @@
 {
   config,
-  userName,
   pkgs,
   variables,
   ...
-}: {
+}: let
+  inherit (variables) userName;
+in {
   users.users."${userName}" = {
     home = "/Users/${userName}";
   };
@@ -117,7 +118,7 @@
 
   # Enable sudo touch id authentication for easier password entry
   security.pam.services.sudo_local.touchIdAuth = true;
-  system.primaryUser = "maxkassel";
+  system.primaryUser = userName;
   # macOS defaults and services
   system.defaults = {
     controlcenter = {

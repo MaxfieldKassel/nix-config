@@ -5,10 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
-    # mac-app-util.url = "github:hraban/mac-app-util";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    # mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,104 +18,69 @@
     nixpkgs,
     nix-darwin,
     home-manager,
-    # mac-app-util,
     nixvim,
     ...
   }: let
-    # Import frequently changed variables
-    variables = import ./variables.nix;
+    lib = nixpkgs.lib;
 
-    inherit
-      (variables)
-      system
-      hostName
-      userName
-      hasHardware
-      ;
-  in {
-    # macOS configuration
-    darwinConfigurations =
-      if system == "aarch64-darwin" || system == "x86_64-darwin"
-      then {
-        "${hostName}" = nix-darwin.lib.darwinSystem {
-          inherit system;
-          modules = [
-            (
-              {pkgs, ...}:
-                import ./modules/common.nix {
-                  inherit pkgs variables;
-                }
-            )
-            (
-              {
-                config,
-                pkgs,
-                ...
-              }:
-                import ./modules/darwin-specific.nix {
-                  inherit
-                    config
-                    userName
-                    pkgs
-                    variables
-                    ;
-                }
-            )
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.users."${userName}" = {
-                imports = [
-                  ./modules/home.nix
-                  nixvim.homeModules.nixvim
-                ];
-                home.username = userName;
-                home.homeDirectory = "/Users/${userName}";
-              };
-            }
-            # mac-app-util.darwinModules.default # Add mac-app-util module
-            # Add nixvim module
-          ];
-        };
-      }
-      else {};
+    # Add a new host by creating hosts/<hostname>.nix and listing it here.
+    hosts = {
+      "Maxs-MacBook-Air" = import ./hosts/Maxs-MacBook-Air.nix;
+    };
 
-    # Linux configuration
-    nixosConfigurations =
-      if system == "x86_64-linux" || system == "aarch64-linux"
-      then {
-        "${hostName}" = nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules = [
-            (
-              {pkgs, ...}:
-                import ./modules/common.nix {
-                  inherit pkgs variables;
-                }
-            )
+    isDarwin = system: lib.hasSuffix "-darwin" system;
 
-            (
-              {pkgs, ...}:
-                import ./modules/linux-specific.nix {
-                  inherit pkgs variables;
-                }
-            )
-            # Conditionally include hardware-configuration.nix
-            (
-              if hasHardware
-              then ./hardware-configuration.nix
-              else null
-            )
+    mkDarwinSystem = _hostName: variables:
+      nix-darwin.lib.darwinSystem {
+        system = variables.system;
+        specialArgs = {inherit variables;};
+        modules = [
+          ./modules/common.nix
+          ./modules/darwin-specific.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.extraSpecialArgs = {inherit variables;};
+            home-manager.users."${variables.userName}" = {
+              imports = [
+                ./modules/home.nix
+                nixvim.homeModules.nixvim
+              ];
+              home.username = variables.userName;
+              home.homeDirectory = "/Users/${variables.userName}";
+            };
+          }
+        ];
+      };
+
+    mkLinuxSystem = _hostName: variables:
+      nixpkgs.lib.nixosSystem {
+        system = variables.system;
+        specialArgs = {inherit variables;};
+        modules =
+          [
+            ./modules/common.nix
+            ./modules/linux-specific.nix
+          ]
+          ++ lib.optional variables.hasHardware ./hardware-configuration.nix
+          ++ [
             home-manager.nixosModules.home-manager
             {
-              home-manager.users."${userName}" = {
+              home-manager.extraSpecialArgs = {inherit variables;};
+              home-manager.users."${variables.userName}" = {
                 imports = [./modules/home.nix];
-                home.username = userName;
-                home.homeDirectory = "/home/${userName}";
+                home.username = variables.userName;
+                home.homeDirectory = "/home/${variables.userName}";
               };
             }
           ];
-        };
-      }
-      else {};
+      };
+  in {
+    darwinConfigurations =
+      lib.mapAttrs mkDarwinSystem
+      (lib.filterAttrs (_: v: isDarwin v.system) hosts);
+
+    nixosConfigurations =
+      lib.mapAttrs mkLinuxSystem
+      (lib.filterAttrs (_: v: !isDarwin v.system) hosts);
   };
 }

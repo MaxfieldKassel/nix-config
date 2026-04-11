@@ -1,4 +1,9 @@
-{pkgs}: {
+{
+  pkgs,
+  lib,
+  variables,
+  ...
+}: {
   programs.bat = {
     enable = true;
   };
@@ -74,38 +79,41 @@
     # zprof.enable = true; # Enable this when you want to profile zsh
 
     # Shell aliases
-    shellAliases = {
-      clr = "clear";
-      grep = "rg";
-      la = "eza -al";
-      l = "eza";
-      ls = "eza -a";
-      htop = "btop";
-      tree = "eza --tree -A --total-size --long --no-time";
+    shellAliases =
+      {
+        clr = "clear";
+        grep = "rg";
+        la = "eza -al";
+        l = "eza";
+        ls = "eza -a";
+        htop = "btop";
+        tree = "eza --tree -A --total-size --long --no-time";
 
-      # z is a replacement for cd written in rust with some advanced features.
-      cd = "z";
+        # z is a replacement for cd written in rust with some advanced features.
+        cd = "z";
 
-      # zi uses fzf to find a file to enter.
-      ci = "zi";
+        # zi uses fzf to find a file to enter.
+        ci = "zi";
 
-      # Override the nix-shell to use zsh to allow for oh-my-posh to run.
-      nix-shell = "nix-shell --run zsh";
+        # Override the nix-shell to use zsh to allow for oh-my-posh to run.
+        nix-shell = "nix-shell --run zsh";
 
-      # Override of ping
-      ping = "gping";
+        # Override of ping
+        ping = "gping";
 
-      # Git aliases
-      gits = "git status";
-      gitc = "git commit";
-      gitp = "git push";
-      gitl = "git log";
-      gitd = "git diff";
+        # Git aliases
+        gits = "git status";
+        gitc = "git commit";
+        gitp = "git push";
+        gitl = "git log";
+        gitd = "git diff";
 
-      rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
-      lg = "lazygit";
-      neofetch = "fastfetch";
-    };
+        lg = "lazygit";
+        neofetch = "fastfetch";
+      }
+      // lib.optionalAttrs (lib.hasSuffix "-darwin" variables.system) {
+        rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
+      };
 
     history = {
       append = true;

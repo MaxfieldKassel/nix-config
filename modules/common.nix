@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   variables,
   ...
@@ -64,17 +65,10 @@
 
       claude-code
     ]
-    ++ (
-      if variables.isHeadless
-      then []
-      else [
-        # GUI programs
-        google-chrome
-        #gimp
-        # brave
-        vlc-bin
-      ]
-    );
+    ++ lib.optionals (!variables.isHeadless) [
+      google-chrome
+      vlc-bin
+    ];
 
   # A list of all nerd fonts are found here:
   # https://www.nerdfonts.com/font-downloads

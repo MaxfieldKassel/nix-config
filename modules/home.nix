@@ -1,21 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
-  programNames = [
-    "kitty"
-    "zsh"
-    "git"
-    "neovim"
-    "vscode"
-  ];
-  loadConfigs = map (name: import ./programs/${name}/${name}.nix {inherit pkgs;}) programNames;
-  mergedPrograms = lib.foldl' (acc: cfg: acc // (cfg.programs or {})) {} loadConfigs;
+{lib, ...}: let
+  programsDir = ./programs;
+  nixFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) (builtins.readDir programsDir);
 in {
   home.stateVersion = "25.11";
   nixpkgs.config.allowUnfree = true;
-
-  programs = mergedPrograms;
+  imports = map (name: programsDir + "/${name}") (builtins.attrNames nixFiles);
 }
