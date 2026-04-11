@@ -9,7 +9,7 @@
       docker
       docker-compose
       openvpn
-      nixfmt-rfc-style
+      nixfmt
       home-manager
       zsh-fzf-tab # The other fzf package does not help
       syncthing

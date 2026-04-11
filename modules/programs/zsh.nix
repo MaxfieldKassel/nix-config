@@ -125,7 +125,7 @@
       save = 50000;
     };
 
-    initExtra = ''
+    initContent = ''
       # Create a function called 'create' that will create a new directory and enter it,
       # also direnv should be added with a flake from the templates.
       function create() {
