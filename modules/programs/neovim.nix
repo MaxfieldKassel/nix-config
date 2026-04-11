@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  programs.neovim = {
+  programs.nixvim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
@@ -7,106 +7,210 @@
     withRuby = false;
     withPython3 = false;
 
-    plugins = with pkgs.vimPlugins; [
-      # Core
-      nvim-tree-lua
-      telescope-nvim
-      telescope-fzf-native-nvim
-      telescope-undo-nvim
-      lualine-nvim
-      nvim-treesitter
-      nvim-colorizer-lua
-      comment-nvim
-      gitsigns-nvim
-      indent-blankline-nvim
-      nvim-autopairs
-      which-key-nvim
-      vim-surround
-      vim-be-good
-      onedark-nvim
+    opts = {
+      number = true;
+      relativenumber = true;
+      mouse = "a";
+      termguicolors = true;
+      showmode = true;
+      cursorline = true;
+      sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions";
+      exrc = true; # load .nvim.lua from project root
+    };
 
-      # UI
-      cinnamon-nvim
-      hop-nvim
-      twilight-nvim
-      nvim-web-devicons
-      mini-nvim
+    colorschemes.onedark.enable = true;
+
+    keymaps = [
+      {
+        mode = "i";
+        key = "jk";
+        action = "<Esc>";
+      }
+
+      # Telescope
+      {
+        mode = "n";
+        key = "<leader>ff";
+        action = "<cmd>Telescope find_files<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>fg";
+        action = "<cmd>Telescope live_grep<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>fb";
+        action = "<cmd>Telescope buffers<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>fh";
+        action = "<cmd>Telescope help_tags<CR>";
+      }
 
       # Git
-      diffview-nvim
-      vim-fugitive
-      git-messenger-vim
+      {
+        mode = "n";
+        key = "<leader>gg";
+        action = "<cmd>LazyGit<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>gH";
+        action = "<cmd>Gitsigns preview_hunk<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>gB";
+        action = "<cmd>Gitsigns toggle_current_line_blame<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>gD";
+        action = "<cmd>Gitsigns diffthis<CR>";
+      }
 
-      # Terminal & Sessions
-      toggleterm-nvim
-      auto-session
-      autosave-nvim
+      # Windows
+      {
+        mode = "n";
+        key = "<leader>wv";
+        action = "<cmd>vsplit<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>ws";
+        action = "<cmd>split<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>ww";
+        action = "<cmd>wincmd w<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>wt";
+        action = "<cmd>ToggleTerm<CR>";
+      }
 
       # Claude Code
-      claudecode-nvim
+      {
+        mode = "n";
+        key = "<leader>ac";
+        action = "<cmd>ClaudeCode<CR>";
+      }
+      {
+        mode = "v";
+        key = "<leader>as";
+        action = "<cmd>ClaudeCodeSend<CR>";
+      }
     ];
 
-    initLua = ''
-      -- Editor options
-      vim.opt.number = true
-      vim.opt.relativenumber = true
-      vim.opt.mouse = 'a'
-      vim.opt.termguicolors = true
+    plugins = {
+      nvim-tree = {
+        enable = true;
+        settings = {
+          view = {
+            width = 30;
+            side = "left";
+          };
+          filters.dotfiles = false;
+        };
+      };
+
+      telescope = {
+        enable = true;
+        extensions = {
+          fzf-native.enable = true;
+          undo.enable = true;
+        };
+      };
+
+      treesitter = {
+        enable = true;
+        grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+          nix
+          lua
+          python
+          javascript
+          typescript
+          bash
+          json
+          yaml
+          markdown
+          html
+          css
+        ];
+      };
+
+      lualine.enable = true;
+      comment.enable = true;
+      gitsigns.enable = true;
+      indent-blankline.enable = true;
+      nvim-autopairs.enable = true;
+      web-devicons.enable = true;
+      vim-surround.enable = true;
+      lazygit.enable = true;
+
+      which-key = {
+        enable = true;
+        settings.spec = [
+          {
+            __unkeyed-1 = "<leader>g";
+            group = "Git";
+          }
+          {
+            __unkeyed-1 = "<leader>gg";
+            desc = "Open Lazygit";
+          }
+          {
+            __unkeyed-1 = "<leader>a";
+            group = "AI / Claude";
+          }
+          {
+            __unkeyed-1 = "<leader>ac";
+            desc = "Open Claude Code";
+          }
+          {
+            __unkeyed-1 = "<leader>as";
+            desc = "Send selection";
+            mode = "v";
+          }
+        ];
+      };
+
+      toggleterm = {
+        enable = true;
+        settings = {
+          open_mapping = "[[<C-\\>]]";
+          direction = "float";
+          float_opts.border = "curved";
+        };
+      };
+
+      auto-session = {
+        enable = true;
+        settings = {
+          log_level = "error";
+          auto_session_suppress_dirs = ["~/"];
+        };
+      };
+    };
+
+    extraPlugins = with pkgs.vimPlugins; [
+      vim-be-good
+      claudecode-nvim
+      autosave-nvim
+    ];
+
+    extraConfigLua = ''
       vim.opt.listchars = { tab = '→ ', space = '·', trail = '•', eol = '¶' }
-      vim.opt.showmode = true
-      vim.opt.cursorline = true
 
-      -- Keymaps
-      local map = vim.keymap.set
+      -- LSP (native nvim 0.11+)
+      vim.lsp.config('pyright', {})
+      vim.lsp.config('ts_ls', {})
+      vim.lsp.enable({'pyright', 'ts_ls'})
 
-      map('i', 'jk', '<Esc>')
-
-      map('n', '<leader>ff', '<cmd>Telescope find_files<CR>')
-      map('n', '<leader>fg', '<cmd>Telescope live_grep<CR>')
-      map('n', '<leader>fb', '<cmd>Telescope buffers<CR>')
-      map('n', '<leader>fh', '<cmd>Telescope help_tags<CR>')
-
-      map('n', '<leader>gc', '<cmd>Git commit<CR>')
-      map('n', '<leader>gs', '<cmd>Git status<CR>')
-      map('n', '<leader>gd', '<cmd>Git diff<CR>')
-      map('n', '<leader>gt', '<cmd>Git blame<CR>')
-      map('n', '<leader>gl', '<cmd>Git log<CR>')
-      map('n', '<leader>gR', '<cmd>Git rebase<CR>')
-      map('n', '<leader>gS', '<cmd>Git stash<CR>')
-      map('n', '<leader>gP', '<cmd>Git push<CR>')
-      map('n', '<leader>gC', '<cmd>Git checkout<CR>')
-      map('n', '<leader>gA', '<cmd>Git add .<CR>')
-      map('n', '<leader>gH', '<cmd>Gitsigns preview_hunk<CR>')
-      map('n', '<leader>gB', '<cmd>Gitsigns toggle_current_line_blame<CR>')
-      map('n', '<leader>gD', '<cmd>Gitsigns diffthis<CR>')
-
-      map('n', '<leader>tn', '<cmd>tabnew<CR>')
-      map('n', '<leader>to', '<cmd>tabonly<CR>')
-      map('n', '<leader>tc', '<cmd>tabclose<CR>')
-      map('n', '<leader>tl', '<cmd>tabnext<CR>')
-      map('n', '<leader>th', '<cmd>tabprevious<CR>')
-
-      map('n', '<leader>wv', '<cmd>vsplit<CR>')
-      map('n', '<leader>ws', '<cmd>split<CR>')
-      map('n', '<leader>ww', '<cmd>wincmd w<CR>')
-      map('n', '<leader>wt', '<cmd>ToggleTerm<CR>')
-
-      -- Trim trailing whitespace command
-      vim.api.nvim_create_user_command('TrimWhitespace', function()
-        local view = vim.fn.winsaveview()
-        vim.cmd([[%s/\s\+$//e]])
-        vim.fn.winrestview(view)
-      end, {})
-
-      -- Auto-open file explorer (without focusing it)
-      vim.api.nvim_create_autocmd('VimEnter', {
-        callback = function()
-          vim.cmd('NvimTreeOpen')
-          vim.cmd('wincmd p')
-        end,
-      })
-
-      -- Autosave
       require("autosave").setup {
         enabled = true,
         execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
@@ -119,74 +223,31 @@
         write_all_buffers = false,
       }
 
-      -- LSP (native nvim 0.11+)
-      vim.lsp.config('pyright', {})
-      vim.lsp.config('ts_ls', {})
-      vim.lsp.enable({'pyright', 'ts_ls'})
-
-      -- File explorer
-      require('nvim-tree').setup {
-        view = { width = 30, side = 'left' },
-        filters = { dotfiles = false },
-      }
-
-      -- Pairs, comments, colorizer
-      require('nvim-autopairs').setup()
-      require('Comment').setup()
-      require('colorizer').setup()
-
-      -- UI
-      require('cinnamon').setup()
-      require('hop').setup()
-      require('twilight').setup()
-      require('mini.indentscope').setup()
-      require('gitsigns').setup()
-
-      -- Statusline
-      require('lualine').setup {
-        options = { theme = 'auto' },
-        sections = {
-          lualine_a = {'mode'},
-          lualine_b = {'branch', 'diff', 'diagnostics'},
-          lualine_c = {'filename'},
-          lualine_x = {'encoding', 'fileformat', 'filetype'},
-          lualine_y = {'progress'},
-          lualine_z = {'location'},
-        },
-      }
-
-      -- Telescope
-      require('telescope').load_extension('fzf')
-
-      -- Floating terminal
-      require("toggleterm").setup {
-        open_mapping = [[<C-\>]],
-        direction = 'float',
-        float_opts = { border = 'curved' },
-      }
-
-      -- Claude Code
       require("claudecode").setup()
-      map('n', '<leader>ac', '<cmd>ClaudeCode<CR>')
-      map('v', '<leader>as', '<cmd>ClaudeCodeSend<CR>')
 
-      -- Which-key
-      require('which-key').setup()
-      require('which-key').add({
-        { '<leader>a', group = 'AI / Claude' },
-        { '<leader>ac', desc = 'Open Claude Code' },
-        { '<leader>as', desc = 'Send selection', mode = 'v' },
+      vim.api.nvim_create_user_command('TrimWhitespace', function()
+        local view = vim.fn.winsaveview()
+        vim.cmd([[%s/\s\+$//e]])
+        vim.fn.winrestview(view)
+      end, {})
+
+      -- Close nvim when nvim-tree is the last window
+      vim.api.nvim_create_autocmd('BufEnter', {
+        nested = true,
+        callback = function()
+          local wins = vim.api.nvim_list_wins()
+          if #wins == 1 and vim.bo[vim.api.nvim_win_get_buf(wins[1])].filetype == 'NvimTree' then
+            vim.cmd('quit')
+          end
+        end,
       })
 
-      -- Session management
-      vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-      require("auto-session").setup {
-        log_level = "info",
-        auto_session_suppress_dirs = { "~/" },
-        auto_session_create_enabled = true,
-        auto_save_enabled = true,
-        auto_restore_enabled = true,
-      }
+      vim.api.nvim_create_autocmd('VimEnter', {
+        callback = function()
+          vim.cmd('NvimTreeOpen')
+          vim.cmd('wincmd p')
+        end,
+      })
     '';
   };
 }
