@@ -97,6 +97,7 @@
         # Override of ping
         ping = "gping";
 
+        ncdu = "gdu";
         lg = "lazygit";
         neofetch = "fastfetch";
       }

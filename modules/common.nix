@@ -23,11 +23,9 @@
       # https://github.com/uutils/coreutils
       uutils-coreutils-noprefix
 
-      # Shows the disk usage in a nice CLI
-      # https://dev.yorhel.nl/ncdu
-      #? I might switch to a differnet package, as this
-      #? one is not written in rust and very open source.
-      ncdu
+      # Disk usage analyzer with a nice CLI, written in Go
+      # https://github.com/dundee/gdu
+      gdu
 
       # TLDR Replacement written in Rust
       # https://github.com/tldr-pages/tlrc
