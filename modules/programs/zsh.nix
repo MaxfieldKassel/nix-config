@@ -94,11 +94,11 @@
         # Override the nix-shell to use zsh to allow for oh-my-posh to run.
         nix-shell = "nix-shell --run zsh";
 
-        # Override of ping
-        ping = "gping";
-
         ncdu = "gdu";
         lg = "lazygit";
+        gitp = "git push";
+        gitm = "git merge";
+        gitc = "git commit";
         neofetch = "fastfetch";
       }
       // lib.optionalAttrs (lib.hasSuffix "-darwin" variables.system) {
