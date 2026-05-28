@@ -61,6 +61,10 @@
       devenv
 
       claude-code
+
+      # An alternative ssh client with trzsz support
+      # https://github.com/trzsz/trzsz-ssh
+      trzsz-ssh
     ]
     ++ lib.optionals (!variables.isHeadless) [
       google-chrome
