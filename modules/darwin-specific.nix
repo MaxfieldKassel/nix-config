@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   variables,
   ...
@@ -19,6 +20,7 @@ in {
       maccy
       colima
       libreoffice-bin
+      openjdk
     ];
 
   system.activationScripts.preActivation = {
@@ -177,6 +179,15 @@ in {
   # ];
   # Disable management since I am using determinate nix
   nix.enable = false;
+
+  # Register the nix-installed JDK with macOS's /usr/libexec/java_home so
+  # VLC's BD-J plugin can find a JVM for interactive Blu-ray menus.
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    mkdir -p /Library/Java/JavaVirtualMachines
+    for jdk_dir in ${pkgs.openjdk}/Library/Java/JavaVirtualMachines/*.jdk; do
+      ln -sfn "$jdk_dir" "/Library/Java/JavaVirtualMachines/$(basename "$jdk_dir")"
+    done
+  '';
 
   launchd.agents.colima = {
     script = ''

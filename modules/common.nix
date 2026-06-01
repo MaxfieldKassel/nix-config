@@ -69,6 +69,7 @@
     ++ lib.optionals (!variables.isHeadless) [
       google-chrome
       vlc-bin
+      libaacs
     ];
 
   # A list of all nerd fonts are found here:
