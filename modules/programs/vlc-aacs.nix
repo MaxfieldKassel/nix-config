@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   variables,
@@ -19,12 +20,28 @@
 in {
   home.file.${keydbTarget}.source = keydb;
 
-  # libbluray's dl_dlopen tries `libaacs.0.dylib`; dyld's fallback search
-  # includes $HOME/lib, so dropping both names there lets VLC find it.
+  # libbluray's dl_dlopen tries `libaacs.0.dylib`. macOS Sequoia removed
+  # $HOME/lib and /usr/local/lib from dyld's default fallback paths, so we
+  # both drop the dylib in $HOME/lib and re-add it to DYLD_FALLBACK_LIBRARY_PATH
+  # via a LaunchAgent (which propagates to all GUI apps launched after login).
   home.file."lib/libaacs.0.dylib" = lib.mkIf isDarwin {
     source = "${pkgs.libaacs}/lib/libaacs.0.dylib";
   };
   home.file."lib/libaacs.dylib" = lib.mkIf isDarwin {
     source = "${pkgs.libaacs}/lib/libaacs.dylib";
+  };
+
+  launchd.agents.dyld-fallback-lib-path = lib.mkIf isDarwin {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "/bin/launchctl"
+        "setenv"
+        "DYLD_FALLBACK_LIBRARY_PATH"
+        "${config.home.homeDirectory}/lib:/usr/local/lib:/usr/lib"
+      ];
+      RunAtLoad = true;
+      KeepAlive = false;
+    };
   };
 }
