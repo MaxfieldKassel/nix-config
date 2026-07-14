@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nix-darwin.url = "github:LnL7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -16,6 +17,7 @@
   outputs = {
     self,
     nixpkgs,
+    nixpkgs-stable,
     nix-darwin,
     home-manager,
     nixvim,
@@ -35,6 +37,14 @@
         system = variables.system;
         specialArgs = {inherit variables;};
         modules = [
+          {
+            nixpkgs.overlays = [
+              (_final: prev: {
+                # Pin Rectangle to the stable channel instead of unstable.
+                rectangle = (import nixpkgs-stable {inherit (prev) system;}).rectangle;
+              })
+            ];
+          }
           ./modules/common.nix
           ./modules/darwin-specific.nix
           home-manager.darwinModules.home-manager

@@ -38,6 +38,8 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
+    # Let Atuin (the history manager) own Ctrl-R; disable fzf's history widget.
+    historyWidget.zsh.command = "";
   };
 
   programs.ripgrep = {

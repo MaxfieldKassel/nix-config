@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   programs.nixvim = {
     enable = true;
+    nixpkgs.source = pkgs.path;
     viAlias = true;
     vimAlias = true;
     defaultEditor = true;
