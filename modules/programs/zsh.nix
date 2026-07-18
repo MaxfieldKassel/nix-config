@@ -74,6 +74,7 @@
     enable = true;
     enableCompletion = true;
     autocd = true;
+    defaultKeymap = "emacs"; # Disable vi bindings (which zsh auto-enables when $EDITOR matches *vi*)
     # zprof.enable = true; # Enable this when you want to profile zsh
 
     # Shell aliases
