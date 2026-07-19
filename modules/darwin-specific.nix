@@ -19,7 +19,6 @@ in {
       maccy
       colima
       libreoffice-bin
-      tailscale-gui
     ];
 
   system.activationScripts.preActivation = {

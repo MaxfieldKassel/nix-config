@@ -65,8 +65,6 @@
       # An alternative ssh client with trzsz support
       # https://github.com/trzsz/trzsz-ssh
       trzsz-ssh
-
-      tailscale
     ]
     ++ lib.optionals (!variables.isHeadless) [
       google-chrome
