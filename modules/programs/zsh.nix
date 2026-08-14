@@ -81,7 +81,6 @@
     shellAliases =
       {
         clr = "clear";
-        grep = "rg";
         la = "eza -al";
         l = "eza";
         ls = "eza -a";
@@ -102,6 +101,7 @@
         gitp = "git push";
         gitm = "git merge";
         gitc = "git commit";
+        gitco = "git checkout";
         neofetch = "fastfetch";
         ssh = "tssh";
       }
@@ -151,28 +151,6 @@
           git init
           git add .envrc  .git  .gitignore flake.nix flake.lock
           git commit -m "Init"
-      }
-
-      # Interactive ripgrep + fzf. Default respects .gitignore; pass -a/--all to
-      # include gitignored and hidden files.
-      function rg() {
-          local include_ignored=0
-          if [[ "$1" == "-a" || "$1" == "--all" ]]; then
-              include_ignored=1
-              shift
-          fi
-
-          local RG_PREFIX="command rg --column --line-number --no-heading --color=always --smart-case"
-          if (( include_ignored )); then
-              RG_PREFIX="$RG_PREFIX --no-ignore --hidden"
-          fi
-
-          : | fzf --ansi --disabled --query "$1" \
-              --bind "start:reload:$RG_PREFIX {q} || true" \
-              --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-              --delimiter : \
-              --preview 'bat --color=always {1} --highlight-line {2}' \
-              --preview-window 'right,60%,+{2}/2'
       }
 
       # VSCode shell integration
