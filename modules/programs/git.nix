@@ -37,8 +37,8 @@
     enableZshIntegration = false;
     settings = {
       git = {
-        pagers = [
-          {pager = "delta --paging=never";}
+        diffRenderers = [
+          {command = "delta --paging=never";}
         ];
       };
     };
