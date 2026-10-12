@@ -1,9 +1,41 @@
 # macOS-only system config (nix-darwin): users, Homebrew apps, system defaults, Dock, Colima.
 {
   pkgs,
+  lib,
   user,
   ...
-}: {
+}: let
+  # Maccy is sandboxed, so its settings live in ~/Library/Containers/org.p0deje.Maccy, which
+  # macOS only lets processes with Full Disk Access write to. They are applied best-effort in
+  # postActivation below instead of CustomUserPreferences, where a refused write aborts the switch.
+  maccySettings = {
+    "NSStatusItem Visible Item-0" = false;
+    "NSWindow Frame com.sindresorhus.Settings.FrameAutosaveName" = "514 394 500 388 0 0 1470 919";
+    enabledPasteboardTypes = [
+      "public.png"
+      "public.html"
+      "public.utf8-plain-text"
+      "public.file-url"
+      "public.rtf"
+      "public.tiff"
+    ];
+    hideTitle = true;
+    ignoreAllAppsExceptListed = false;
+    ignoredPasteboardTypes = [];
+    imageMaxHeight = 40;
+    maxMenuItemLength = 50;
+    maxMenuItems = 0;
+    popupPosition = "center";
+    popupScreen = 0;
+    removeFormattingByDefault = true;
+    searchMode = "fuzzy";
+    showInStatusBar = false;
+  };
+
+  asUser = cmd: ''launchctl asuser "$(id -u -- ${user.name})" sudo --user=${user.name} -- ${cmd}'';
+  writeMaccySetting = key: value:
+    asUser "defaults write org.p0deje.Maccy ${lib.escapeShellArg key} ${lib.escapeShellArg (lib.generators.toPlist {escape = true;} value)}";
+in {
   users.users.${user.name} = {
     home = "/Users/${user.name}";
   };
@@ -89,31 +121,6 @@
         keyCode = 126;
         modifierFlags = 786432;
       };
-    };
-
-    # Maccy settings
-    "org.p0deje.Maccy" = {
-      "NSStatusItem Visible Item-0" = false;
-      "NSWindow Frame com.sindresorhus.Settings.FrameAutosaveName" = "514 394 500 388 0 0 1470 919";
-      enabledPasteboardTypes = [
-        "public.png"
-        "public.html"
-        "public.utf8-plain-text"
-        "public.file-url"
-        "public.rtf"
-        "public.tiff"
-      ];
-      hideTitle = true;
-      ignoreAllAppsExceptListed = false;
-      ignoredPasteboardTypes = [];
-      imageMaxHeight = 40;
-      maxMenuItemLength = 50;
-      maxMenuItems = 0;
-      popupPosition = "center";
-      popupScreen = 0;
-      removeFormattingByDefault = true;
-      searchMode = "fuzzy";
-      showInStatusBar = false;
     };
 
     "com.apple.dock" = {
@@ -208,6 +215,14 @@
   # ];
   # Disable management since I am using determinate nix
   nix.enable = false;
+
+  system.activationScripts.postActivation.text = ''
+    echo >&2 "applying Maccy settings..."
+    if ! { ${lib.concatStringsSep " && " (lib.mapAttrsToList writeMaccySetting maccySettings)}; } 2>/dev/null; then
+      echo >&2 "warning: macOS refused to write Maccy's settings (it is a sandboxed app). Give your"
+      echo >&2 "terminal Full Disk Access in System Settings > Privacy & Security, then rebuild."
+    fi
+  '';
 
   launchd.agents.colima = {
     # Run in the foreground so launchd supervises the VM; a plain `colima start`
