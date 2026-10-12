@@ -9,7 +9,7 @@ This is a cross-platform Nix flake configuration supporting both macOS (nix-darw
 ## Apply Configuration
 
 ```bash
-# macOS (nix-darwin). Homebrew must be installed first (https://brew.sh); GUI apps are casks.
+# macOS (nix-darwin)
 sudo darwin-rebuild switch --flake .
 
 # NixOS
@@ -39,7 +39,7 @@ nix flake check
 
 **`modules/shared.nix`** — System-level config for both platforms: Docker/OpenVPN, fonts, `allowUnfree`.
 
-**`modules/darwin.nix`** — macOS-only: Homebrew casks for GUI apps, system defaults (Finder, Dock, screensaver), app settings (Rectangle, Maccy) via `system.defaults.CustomUserPreferences`, Colima launchd agent.
+**`modules/darwin.nix`** — macOS-only: GUI apps (Rectangle pinned to `nixpkgs-stable`), system defaults (Finder, Dock, screensaver), app settings (Rectangle via `system.defaults.CustomUserPreferences`; Maccy best-effort in `postActivation` because it is sandboxed), Colima launchd agent.
 
 **`modules/nixos.nix`** — NixOS-only base config (user, zsh, flakes, locale, Docker). **`modules/nixos-desktop.nix`** — GNOME, sound, printing and GUI apps; imported by hosts that have a screen.
 

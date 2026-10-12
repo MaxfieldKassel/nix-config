@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nix-darwin.url = "github:LnL7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -15,6 +16,7 @@
 
   outputs = {
     nixpkgs,
+    nixpkgs-stable,
     nix-darwin,
     home-manager,
     nixvim,
@@ -35,7 +37,7 @@
         else nixpkgs.lib.nixosSystem
       ) {
         inherit system;
-        specialArgs = {inherit user;};
+        specialArgs = {inherit user nixpkgs-stable;};
         modules = [
           ./modules/shared.nix
           (

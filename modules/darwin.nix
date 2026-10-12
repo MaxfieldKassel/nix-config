@@ -1,8 +1,9 @@
-# macOS-only system config (nix-darwin): users, Homebrew apps, system defaults, Dock, Colima.
+# macOS-only system config (nix-darwin): users, apps, system defaults, Dock, Colima.
 {
   pkgs,
   lib,
   user,
+  nixpkgs-stable,
   ...
 }: let
   # Maccy is sandboxed, so its settings live in ~/Library/Containers/org.p0deje.Maccy, which
@@ -40,31 +41,32 @@ in {
     home = "/Users/${user.name}";
   };
 
+  # Pin Rectangle to the stable channel instead of unstable.
+  nixpkgs.overlays = [
+    (_final: prev: {
+      rectangle = nixpkgs-stable.legacyPackages.${prev.stdenv.hostPlatform.system}.rectangle;
+    })
+  ];
+
   environment.systemPackages = with pkgs; [
+    google-chrome
+    vlc-bin
+    libreoffice-bin
+    rectangle
+    maccy
     mas
     colima
   ];
 
-  # GUI apps come from Homebrew casks: macOS apps behave better installed in /Applications
-  # than from the read-only Nix store. Homebrew itself must already be installed (https://brew.sh).
-  homebrew = {
-    enable = true;
-    casks = [
-      "google-chrome"
-      "vlc"
-      "libreoffice"
-      "rectangle"
-      "maccy"
-    ];
-    # masApps = {
-    #   "Grocery" = 1195676848;
-    #   "Spark Desktop" = 6445813049;
-    #   "Things" = 904280696;
-    #   "Bitwarden" = 1352778147;
-    #   "AutoMounter" = 1160435653;
-    #   "WireGuard" = 1451685025;
-    # };
-  };
+  # homebrew.enable = true;
+  # homebrew.masApps = {
+  #   "Grocery" = 1195676848;
+  #   "Spark Desktop" = 6445813049;
+  #   "Things" = 904280696;
+  #   "Bitwarden" = 1352778147;
+  #   "AutoMounter" = 1160435653;
+  #   "WireGuard" = 1451685025;
+  # };
 
   # App settings are written as the primary user (activation scripts run as root, so
   # `defaults write` there would only change root's preferences).
@@ -180,7 +182,7 @@ in {
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
         # "${brave}/Applications/Brave Browser.app"
-        "/Applications/Google Chrome.app"
+        "${pkgs.google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps
         "/System/Applications/FaceTime.app"
