@@ -34,13 +34,13 @@ nix flake check
 
 ## Architecture
 
-**`hosts/<hostname>.nix`** — One file per machine. Controls `system`, `hostName`, `userName`, `timeZone`, `isHeadless`, and `hasHardware`. To add a new host, create a file here and list it in the `hosts` attrset in `flake.nix`.
+**`hosts/<hostname>.nix`** — One file per machine. Controls `system`, `hostName`, `userName`, `timeZone`, `isHeadless`, and `hasHardware`. NixOS hosts must also set `grubDevice` and `stateVersion`. To add a new host, create a file here and list it in the `hosts` attrset in `flake.nix`.
 
 **`flake.nix`** — Entry point. Defines the `hosts` attrset and uses `lib.mapAttrs` + `lib.filterAttrs` to build `darwinConfigurations` (suffix `-darwin`) or `nixosConfigurations` (everything else). Host variables are passed to all modules via `specialArgs` / `home-manager.extraSpecialArgs`.
 
 **`modules/common.nix`** — System packages and fonts shared across all platforms.
 
-**`modules/darwin-specific.nix`** — macOS-only: nix-darwin system defaults (Finder, Dock, screensaver), macOS app settings (Rectangle, Maccy) via `activationScripts`, Colima launchd agent, and Darwin-only packages.
+**`modules/darwin-specific.nix`** — macOS-only: nix-darwin system defaults (Finder, Dock, screensaver), macOS app settings (Rectangle, Maccy) via `system.defaults.CustomUserPreferences`, Colima launchd agent, and Darwin-only packages.
 
 **`modules/linux-specific.nix`** — NixOS-only configuration.
 

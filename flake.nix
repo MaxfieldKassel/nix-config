@@ -92,7 +92,11 @@
       systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     in
       lib.genAttrs systems (system: let
-        pkgs = nixpkgs.legacyPackages.${system};
+        # claude-code is unfree, so legacyPackages (which disallows unfree) can't be used here.
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
       in {
         default = pkgs.mkShell {
           packages = with pkgs; [
@@ -112,7 +116,11 @@
           shellHook = ''
             export EDITOR=nvim
             export SHELL=${pkgs.zsh}/bin/zsh
-            exec ${pkgs.zsh}/bin/zsh
+            # Only switch to zsh for an interactive `nix develop`, so `nix develop -c <cmd>`
+            # and direnv's `use flake` keep working.
+            if [[ $- == *i* ]]; then
+              exec ${pkgs.zsh}/bin/zsh
+            fi
           '';
         };
       });

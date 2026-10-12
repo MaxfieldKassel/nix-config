@@ -48,8 +48,10 @@
 
   programs.gh = {
     enable = true;
-    extensions = [pkgs.github-copilot-cli];
   };
+
+  # GitHub Copilot CLI is a standalone `copilot` binary, not a gh extension.
+  home.packages = [pkgs.github-copilot-cli];
 
   programs.btop = {
     enable = true;

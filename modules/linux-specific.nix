@@ -28,15 +28,18 @@ in {
   # Packages to install (linux specific)
   environment.systemPackages = with pkgs; [
     libreoffice
-    whatsapp-for-linux
+    karere # WhatsApp client (whatsapp-for-linux was removed from nixpkgs)
   ];
 
   # System hostname
   networking.hostName = variables.hostName;
 
-  # Bootloader configuration
+  # Enable flakes so `nixos-rebuild switch --flake .` keeps working after the first switch
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
+  # Bootloader configuration (the device is per-machine, set grubDevice in hosts/<hostname>.nix)
   boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.device = variables.grubDevice;
   boot.loader.grub.useOSProber = true;
 
   # Enable network manager
@@ -59,8 +62,8 @@ in {
 
   # Conditional GUI configuration
   services.xserver.enable = hasGUI;
-  services.xserver.displayManager.gdm.enable = hasGUI;
-  services.xserver.desktopManager.gnome.enable = hasGUI;
+  services.displayManager.gdm.enable = hasGUI;
+  services.desktopManager.gnome.enable = hasGUI;
 
   services.xserver.xkb = lib.mkIf hasGUI {
     layout = "us";
@@ -71,7 +74,7 @@ in {
   services.printing.enable = hasGUI;
 
   # Enable sound only when not in headless mode
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = hasGUI;
   services.pipewire = {
     enable = hasGUI;
@@ -83,6 +86,7 @@ in {
   # Virtualization and Docker
   virtualisation.docker.enable = true;
 
-  # Set the state version
-  system.stateVersion = "25.05";
+  # The state version is per-machine (the NixOS release it was first installed with),
+  # set stateVersion in hosts/<hostname>.nix
+  system.stateVersion = variables.stateVersion;
 }

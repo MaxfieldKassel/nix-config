@@ -21,55 +21,6 @@ in {
       libreoffice-bin
     ];
 
-  system.activationScripts.preActivation = {
-    enable = true;
-    text = ''
-      # Set the settings for Rectangle
-      defaults write com.knollsoft.Rectangle SUEnableAutomaticChecks -bool false
-      defaults write com.knollsoft.Rectangle SUHasLaunchedBefore -bool true
-      defaults write com.knollsoft.Rectangle SULastCheckTime -string "2024-12-17 19:35:05 +0000"
-      defaults write com.knollsoft.Rectangle SUUpdateGroupIdentifier -int 3905483831
-      defaults write com.knollsoft.Rectangle allowAnyShortcut -bool true
-      defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool false
-      defaults write com.knollsoft.Rectangle hideMenubarIcon -bool true
-      defaults write com.knollsoft.Rectangle internalTilingNotified -bool true
-      defaults write com.knollsoft.Rectangle lastVersion -int 91
-      defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 0
-
-      defaults write com.knollsoft.Rectangle bottomHalf -dict keyCode -int 125 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle leftHalf -dict keyCode -int 123 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle maximize -dict keyCode -int 36 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle nextDisplay -dict keyCode -int 124 modifierFlags -int 1572864
-      defaults write com.knollsoft.Rectangle previousDisplay -dict keyCode -int 123 modifierFlags -int 1572864
-      defaults write com.knollsoft.Rectangle reflowTodo -dict keyCode -int 45 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle rightHalf -dict keyCode -int 124 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle toggleTodo -dict keyCode -int 11 modifierFlags -int 786432
-      defaults write com.knollsoft.Rectangle topHalf -dict keyCode -int 126 modifierFlags -int 786432
-
-
-      # Set the settings for Maccy
-      defaults write org.p0deje.Maccy "NSStatusItem Visible Item-0" -bool false
-      defaults write org.p0deje.Maccy "NSWindow Frame com.sindresorhus.Settings.FrameAutosaveName" -string "514 394 500 388 0 0 1470 919"
-      defaults write org.p0deje.Maccy enabledPasteboardTypes -array \
-        "public.png" \
-        "public.html" \
-        "public.utf8-plain-text" \
-        "public.file-url" \
-        "public.rtf" \
-        "public.tiff"
-      defaults write org.p0deje.Maccy hideTitle -bool true
-      defaults write org.p0deje.Maccy ignoreAllAppsExceptListed -bool false
-      defaults write org.p0deje.Maccy ignoredPasteboardTypes -array
-      defaults write org.p0deje.Maccy imageMaxHeight -int 40
-      defaults write org.p0deje.Maccy maxMenuItemLength -int 50
-      defaults write org.p0deje.Maccy maxMenuItems -int 0
-      defaults write org.p0deje.Maccy popupPosition -string "center"
-      defaults write org.p0deje.Maccy popupScreen -int 0
-      defaults write org.p0deje.Maccy removeFormattingByDefault -bool true
-      defaults write org.p0deje.Maccy searchMode -string "fuzzy"
-      defaults write org.p0deje.Maccy showInStatusBar -bool false
-    '';
-  };
   # homebrew.enable = true;
   # homebrew.masApps = {
   #   "Grocery" = 1195676848;
@@ -79,10 +30,88 @@ in {
   #   "AutoMounter" = 1160435653;
   #   "WireGuard" = 1451685025;
   # };
-  # Need to use this custom user preferences to set the Downloads and Documents folder in the dock
+  # App settings are written as the primary user (activation scripts run as root, so
+  # `defaults write` there would only change root's preferences).
+  # The Dock entries below need custom user preferences to set the Downloads and Documents folder
   # in order to save display settings for those folders in the dock. There is an open issue for this:
   # https://github.com/LnL7/nix-darwin/pull/1004
   system.defaults.CustomUserPreferences = {
+    # Rectangle settings
+    "com.knollsoft.Rectangle" = {
+      SUEnableAutomaticChecks = false;
+      SUHasLaunchedBefore = true;
+      SULastCheckTime = "2024-12-17 19:35:05 +0000";
+      SUUpdateGroupIdentifier = 3905483831;
+      allowAnyShortcut = true;
+      alternateDefaultShortcuts = false;
+      hideMenubarIcon = true;
+      internalTilingNotified = true;
+      lastVersion = 91;
+      subsequentExecutionMode = 0;
+
+      bottomHalf = {
+        keyCode = 125;
+        modifierFlags = 786432;
+      };
+      leftHalf = {
+        keyCode = 123;
+        modifierFlags = 786432;
+      };
+      maximize = {
+        keyCode = 36;
+        modifierFlags = 786432;
+      };
+      nextDisplay = {
+        keyCode = 124;
+        modifierFlags = 1572864;
+      };
+      previousDisplay = {
+        keyCode = 123;
+        modifierFlags = 1572864;
+      };
+      reflowTodo = {
+        keyCode = 45;
+        modifierFlags = 786432;
+      };
+      rightHalf = {
+        keyCode = 124;
+        modifierFlags = 786432;
+      };
+      toggleTodo = {
+        keyCode = 11;
+        modifierFlags = 786432;
+      };
+      topHalf = {
+        keyCode = 126;
+        modifierFlags = 786432;
+      };
+    };
+
+    # Maccy settings
+    "org.p0deje.Maccy" = {
+      "NSStatusItem Visible Item-0" = false;
+      "NSWindow Frame com.sindresorhus.Settings.FrameAutosaveName" = "514 394 500 388 0 0 1470 919";
+      enabledPasteboardTypes = [
+        "public.png"
+        "public.html"
+        "public.utf8-plain-text"
+        "public.file-url"
+        "public.rtf"
+        "public.tiff"
+      ];
+      hideTitle = true;
+      ignoreAllAppsExceptListed = false;
+      ignoredPasteboardTypes = [];
+      imageMaxHeight = 40;
+      maxMenuItemLength = 50;
+      maxMenuItems = 0;
+      popupPosition = "center";
+      popupScreen = 0;
+      removeFormattingByDefault = true;
+      searchMode = "fuzzy";
+      showInStatusBar = false;
+    };
+
     "com.apple.dock" = {
       persistent-others = [
         {
@@ -179,8 +208,10 @@ in {
   nix.enable = false;
 
   launchd.agents.colima = {
+    # Run in the foreground so launchd supervises the VM; a plain `colima start`
+    # exits once the VM is up, which made KeepAlive relaunch it every ~10s.
     script = ''
-      ${pkgs.colima}/bin/colima start
+      exec ${pkgs.colima}/bin/colima start --foreground
     '';
     serviceConfig = {
       RunAtLoad = true;

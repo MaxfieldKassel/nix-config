@@ -21,6 +21,13 @@
 
     colorschemes.onedark.enable = true;
 
+    # LSP (native nvim 0.11+). nixvim installs the server binaries and
+    # nvim-lspconfig provides their default configs (cmd, filetypes, root markers).
+    lsp.servers = {
+      pyright.enable = true;
+      ts_ls.enable = true;
+    };
+
     keymaps = [
       {
         mode = "i";
@@ -108,6 +115,8 @@
     ];
 
     plugins = {
+      lspconfig.enable = true;
+
       nvim-tree = {
         enable = true;
         settings = {
@@ -206,11 +215,6 @@
 
     extraConfigLua = ''
       vim.opt.listchars = { tab = '→ ', space = '·', trail = '•', eol = '¶' }
-
-      -- LSP (native nvim 0.11+)
-      vim.lsp.config('pyright', {})
-      vim.lsp.config('ts_ls', {})
-      vim.lsp.enable({'pyright', 'ts_ls'})
 
       require("autosave").setup {
         enabled = true,

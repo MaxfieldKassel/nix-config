@@ -14,7 +14,7 @@
       push.autoSetupRemote = true;
       push.default = "simple";
 
-      aliases = {
+      alias = {
         co = "checkout";
         b = "branch";
         c = "commit";
