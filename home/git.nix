@@ -1,11 +1,11 @@
-{variables, ...}: {
+{user, ...}: {
   programs.git = {
     enable = true;
     lfs.enable = true;
 
     settings = {
-      user.name = variables.gitName;
-      user.email = variables.gitEmail;
+      user.name = user.fullName;
+      user.email = user.email;
 
       core.editor = "nvim";
       init.defaultBranch = "main";

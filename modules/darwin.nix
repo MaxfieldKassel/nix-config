@@ -1,35 +1,39 @@
+# macOS-only system config (nix-darwin): users, Homebrew apps, system defaults, Dock, Colima.
 {
-  config,
   pkgs,
-  variables,
+  user,
   ...
-}: let
-  inherit (variables) userName;
-in {
-  users.users."${userName}" = {
-    home = "/Users/${userName}";
+}: {
+  users.users.${user.name} = {
+    home = "/Users/${user.name}";
   };
 
-  environment.systemPackages = with pkgs;
-    if variables.isHeadless
-    then []
-    else [
-      mas
-      rectangle
-      maccy
-      colima
-      libreoffice-bin
-    ];
+  environment.systemPackages = with pkgs; [
+    mas
+    colima
+  ];
 
-  # homebrew.enable = true;
-  # homebrew.masApps = {
-  #   "Grocery" = 1195676848;
-  #   "Spark Desktop" = 6445813049;
-  #   "Things" = 904280696;
-  #   "Bitwarden" = 1352778147;
-  #   "AutoMounter" = 1160435653;
-  #   "WireGuard" = 1451685025;
-  # };
+  # GUI apps come from Homebrew casks: macOS apps behave better installed in /Applications
+  # than from the read-only Nix store. Homebrew itself must already be installed (https://brew.sh).
+  homebrew = {
+    enable = true;
+    casks = [
+      "google-chrome"
+      "vlc"
+      "libreoffice"
+      "rectangle"
+      "maccy"
+    ];
+    # masApps = {
+    #   "Grocery" = 1195676848;
+    #   "Spark Desktop" = 6445813049;
+    #   "Things" = 904280696;
+    #   "Bitwarden" = 1352778147;
+    #   "AutoMounter" = 1160435653;
+    #   "WireGuard" = 1451685025;
+    # };
+  };
+
   # App settings are written as the primary user (activation scripts run as root, so
   # `defaults write` there would only change root's preferences).
   # The Dock entries below need custom user preferences to set the Downloads and Documents folder
@@ -117,7 +121,7 @@ in {
         {
           "tile-data" = {
             "file-data" = {
-              "_CFURLString" = "/Users/${userName}/Documents";
+              "_CFURLString" = "/Users/${user.name}/Documents";
               "_CFURLStringType" = 0;
             };
             "arrangement" = 1; # Sort by: Name
@@ -130,7 +134,7 @@ in {
         {
           "tile-data" = {
             "file-data" = {
-              "_CFURLString" = "/Users/${userName}/Downloads";
+              "_CFURLString" = "/Users/${user.name}/Downloads";
               "_CFURLStringType" = 0;
             };
             "arrangement" = 2; # Sort by: Date Added
@@ -143,11 +147,9 @@ in {
     };
   };
 
-  system.stateVersion = 5;
-
   # Enable sudo touch id authentication for easier password entry
   security.pam.services.sudo_local.touchIdAuth = true;
-  system.primaryUser = userName;
+  system.primaryUser = user.name;
   # macOS defaults and services
   system.defaults = {
     controlcenter = {
@@ -167,11 +169,11 @@ in {
     };
 
     dock = {
-      persistent-apps = with pkgs; [
+      persistent-apps = [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
         # "${brave}/Applications/Brave Browser.app"
-        "${google-chrome}/Applications/Google Chrome.app"
+        "/Applications/Google Chrome.app"
 
         # Communication Apps
         "/System/Applications/FaceTime.app"
@@ -180,8 +182,8 @@ in {
         "/Applications/Claude.app"
 
         # Productivity Tools
-        "${vscode}/Applications/Visual Studio Code.app"
-        "${kitty}/Applications/kitty.app"
+        "${pkgs.vscode}/Applications/Visual Studio Code.app"
+        "${pkgs.kitty}/Applications/kitty.app"
         "/System/Applications/Calendar.app"
         "/Applications/Things3.app"
 
@@ -202,7 +204,7 @@ in {
 
   # nix.settings.trusted-users = [
   #   "root"
-  #   "${userName}"
+  #   "${user.name}"
   # ];
   # Disable management since I am using determinate nix
   nix.enable = false;

@@ -1,11 +1,7 @@
-{
-  system = "aarch64-darwin";
-  gitName = "Maxfield Kassel";
-  gitEmail = "106034283+MaxfieldKassel@users.noreply.github.com";
-  hostName = "Maxs-MacBook-Air";
-  userName = "maxkassel";
-  description = "Default user";
-  timeZone = "America/Chicago";
-  isHeadless = false;
-  hasHardware = false;
+# MacBook Air (Apple silicon). Machine-specific settings only; shared config lives in modules/.
+{...}: {
+  networking.hostName = "Maxs-MacBook-Air";
+
+  # Set once at install time. Don't change it on an existing machine.
+  system.stateVersion = 5;
 }

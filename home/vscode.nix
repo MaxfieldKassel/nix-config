@@ -46,7 +46,7 @@
       # Turn on autosave, use 100 ms as default
       "files.autoSave" = "afterDelay";
       "files.autoSaveDelay" = 100; # Delay in milliseconds
-      # Set terminal to hack nerd font which is installed in common.nix
+      # Set terminal to hack nerd font which is installed in modules/shared.nix
       "terminal.integrated.fontFamily" = "Hack Nerd Font";
 
       "extensions.autoCheckUpdates" = false;

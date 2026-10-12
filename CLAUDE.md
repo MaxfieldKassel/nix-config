@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a cross-platform Nix flake configuration supporting both macOS (nix-darwin) and NixOS. It manages system packages, macOS defaults, and home-manager configs (dotfiles) for programs like Neovim, Zsh, Git, Kitty, and VSCode.
+This is a cross-platform Nix flake configuration supporting both macOS (nix-darwin) and NixOS. It manages system settings, macOS defaults, and home-manager configs (dotfiles) for programs like Neovim, Zsh, Git, Kitty, and VSCode.
 
 ## Apply Configuration
 
 ```bash
-# macOS (nix-darwin)
-darwin-rebuild switch --flake .
+# macOS (nix-darwin). Homebrew must be installed first (https://brew.sh); GUI apps are casks.
+sudo darwin-rebuild switch --flake .
 
 # NixOS
 sudo nixos-rebuild switch --flake .
@@ -19,14 +19,11 @@ sudo nixos-rebuild switch --flake .
 nix flake update
 ```
 
-## Development Environment
+## Development
 
 ```bash
-# Enter devenv shell (activates pre-commit hooks and nix LSP)
-devenv shell
-
-# Format all Nix files
-alejandra .
+# Format all Nix files (alejandra)
+nix fmt
 
 # Check flake without applying
 nix flake check
@@ -34,20 +31,18 @@ nix flake check
 
 ## Architecture
 
-**`hosts/<hostname>.nix`** — One file per machine. Controls `system`, `hostName`, `userName`, `timeZone`, `isHeadless`, and `hasHardware`. NixOS hosts must also set `grubDevice` and `stateVersion`. To add a new host, create a file here and list it in the `hosts` attrset in `flake.nix`.
+**`flake.nix`** — Entry point. One `mkSystem` helper builds either a nix-darwin or NixOS system; each machine is one explicit line under `darwinConfigurations` or `nixosConfigurations`. Home-manager runs as a system module with `useGlobalPkgs`, so there is a single nixpkgs instance. The `user` record is passed to every module (system and home) via `specialArgs` / `extraSpecialArgs`.
 
-**`flake.nix`** — Entry point. Defines the `hosts` attrset and uses `lib.mapAttrs` + `lib.filterAttrs` to build `darwinConfigurations` (suffix `-darwin`) or `nixosConfigurations` (everything else). Host variables are passed to all modules via `specialArgs` / `home-manager.extraSpecialArgs`.
+**`user.nix`** — Username, full name and email of the person these machines belong to.
 
-**`modules/common.nix`** — System packages and fonts shared across all platforms.
+**`hosts/<hostName>.nix`** — One real module per machine, holding only machine-specific settings: `networking.hostName`, `system.stateVersion`, and on NixOS the bootloader, `hardware-configuration.nix` import, and `../modules/nixos-desktop.nix` if it has a screen. To add a machine, create the file and add a `mkSystem` line in `flake.nix`.
 
-**`modules/darwin-specific.nix`** — macOS-only: nix-darwin system defaults (Finder, Dock, screensaver), macOS app settings (Rectangle, Maccy) via `system.defaults.CustomUserPreferences`, Colima launchd agent, and Darwin-only packages.
+**`modules/shared.nix`** — System-level config for both platforms: Docker/OpenVPN, fonts, `allowUnfree`.
 
-**`modules/linux-specific.nix`** — NixOS-only configuration.
+**`modules/darwin.nix`** — macOS-only: Homebrew casks for GUI apps, system defaults (Finder, Dock, screensaver), app settings (Rectangle, Maccy) via `system.defaults.CustomUserPreferences`, Colima launchd agent.
 
-**`modules/home.nix`** — Home-manager entry point. Auto-imports every `.nix` file found in `modules/programs/` using `builtins.readDir`. To add a new program, just create a file there.
+**`modules/nixos.nix`** — NixOS-only base config (user, zsh, flakes, locale, Docker). **`modules/nixos-desktop.nix`** — GNOME, sound, printing and GUI apps; imported by hosts that have a screen.
 
-**`modules/programs/<name>.nix`** — Each program module is a standard home-manager module (receives `pkgs`, `lib`, `variables`, etc.).
+**`home/default.nix`** — Home-manager entry point; explicitly imports each file in `home/`. To add a program, create `home/<name>.nix` and add it to the imports list.
 
-## Pre-commit Hooks (via devenv)
-
-- **alejandra** — auto-formats all `.nix` files on commit
+**`home/cli.nix`** — User CLI packages and small tool configs (eza, fzf, atuin, direnv, …). **`home/zsh.nix`** — Zsh config; fzf-tab completion settings live in `home/zsh/fzf-tab.zsh`.
