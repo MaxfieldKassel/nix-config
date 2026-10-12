@@ -68,7 +68,12 @@
     ]
     ++ lib.optionals (!variables.isHeadless) [
       google-chrome
-      vlc-bin
+      # vlc-bin is the macOS app bundle and isn't available on Linux.
+      (
+        if stdenv.hostPlatform.isDarwin
+        then vlc-bin
+        else vlc
+      )
     ];
 
   # A list of all nerd fonts are found here:
