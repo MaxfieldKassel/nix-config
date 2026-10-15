@@ -21,6 +21,13 @@
 
     colorschemes.onedark.enable = true;
 
+    # LSP (native nvim 0.11+). nixvim installs the server binaries and
+    # nvim-lspconfig provides their default configs (cmd, filetypes, root markers).
+    lsp.servers = {
+      pyright.enable = true;
+      ts_ls.enable = true;
+    };
+
     keymaps = [
       {
         mode = "i";
@@ -108,6 +115,8 @@
     ];
 
     plugins = {
+      lspconfig.enable = true;
+
       nvim-tree = {
         enable = true;
         settings = {
@@ -207,21 +216,27 @@
     extraConfigLua = ''
       vim.opt.listchars = { tab = '→ ', space = '·', trail = '•', eol = '¶' }
 
-      -- LSP (native nvim 0.11+)
-      vim.lsp.config('pyright', {})
-      vim.lsp.config('ts_ls', {})
-      vim.lsp.enable({'pyright', 'ts_ls'})
-
+      -- autosave-nvim is nullishamy/autosave.nvim. Each top-level option replaces its default
+      -- entirely, so the filters list keeps the three the plugin needs to work.
+      local autosave_filters = require("autosave.filters")
       require("autosave").setup {
-        enabled = true,
-        execution_message = "Autosaved at " .. os.date("%H:%M:%S"),
-        events = {"InsertLeave", "TextChanged"},
-        conditions = {
-          exists = true,
-          filetype_is_not = {"gitcommit", "markdown"},
-          modifiable = true,
+        events = {
+          register = true,
+          triggers = { "InsertLeave", "TextChanged" },
         },
-        write_all_buffers = false,
+        filters = {
+          autosave_filters.writeable,
+          autosave_filters.not_empty,
+          autosave_filters.modified,
+          autosave_filters.modifiable,
+          autosave_filters.filetype("gitcommit"),
+          autosave_filters.filetype("markdown"),
+        },
+        hooks = {
+          post_write = function()
+            vim.api.nvim_echo({ { "Autosaved at " .. os.date("%H:%M:%S") } }, false, {})
+          end,
+        },
       }
 
       require("claudecode").setup()

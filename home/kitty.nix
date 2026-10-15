@@ -54,7 +54,8 @@
       scrollback_lines = 10000;
 
       detect_urls = true;
-      allow_remote_control = true;
+      # No keybinding needs this; "yes" would let any program in the terminal (even over SSH) control kitty.
+      allow_remote_control = "no";
       shell_integration = true;
 
       confirm_os_window_close = 0; # Don't confirm when closing a window
@@ -74,7 +75,6 @@
       "ctrl+shift+right" = "next_tab";
       "ctrl+shift+left" = "previous_tab";
       "cmd+r" = "set_tab_title";
-      "ctrl+r" = "set_tab_color";
 
       "cmd+1" = "goto_tab 1";
       "cmd+2" = "goto_tab 2";
@@ -89,7 +89,7 @@
 
       "ctrl+shift+e" = "new_window";
       "ctrl+shift+s" = "new_window";
-      "ctrl+shift+f" = "full_screen";
+      "ctrl+shift+f" = "toggle_fullscreen";
 
       "super+shift+t" = "launch --type=tab --cwd=current";
       "super+t" = "launch --type=tab --cwd=current";

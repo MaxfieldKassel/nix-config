@@ -4,13 +4,9 @@
 
     # Add Nix-related extensions
     profiles.default.extensions = with pkgs.vscode-extensions; [
-      # Basic Nix syntax highlighting
-      # https://marketplace.visualstudio.com/items?itemName=bbenoist.Nix
-      bbenoist.nix
-
-      # Nix formatter for vscode
-      # https://marketplace.visualstudio.com/items?itemName=brettm12345.nixfmt-vscode
-      brettm12345.nixfmt-vscode
+      # Nix syntax highlighting and formatting (uses alejandra, like `nix fmt`)
+      # https://marketplace.visualstudio.com/items?itemName=jnoortheen.nix-ide
+      jnoortheen.nix-ide
 
       # Color coded comments #! like this!
       # https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments
@@ -41,12 +37,13 @@
     # VSCode settings
     profiles.default.userSettings = {
       "editor.formatOnSave" = true;
+      "nix.formatterPath" = "${pkgs.alejandra}/bin/alejandra";
       "editor.formatOnPaste" = true;
 
       # Turn on autosave, use 100 ms as default
       "files.autoSave" = "afterDelay";
       "files.autoSaveDelay" = 100; # Delay in milliseconds
-      # Set terminal to hack nerd font which is installed in common.nix
+      # Set terminal to hack nerd font which is installed in modules/shared.nix
       "terminal.integrated.fontFamily" = "Hack Nerd Font";
 
       "extensions.autoCheckUpdates" = false;

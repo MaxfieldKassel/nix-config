@@ -15,7 +15,6 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     nixpkgs-stable,
     nix-darwin,
@@ -24,105 +23,93 @@
     ...
   }: let
     lib = nixpkgs.lib;
+    user = import ./user.nix;
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
 
-    # Add a new host by creating hosts/<hostname>.nix and listing it here.
-    hosts = {
-      "Maxs-MacBook-Air" = import ./hosts/Maxs-MacBook-Air.nix;
-    };
-
-    isDarwin = system: lib.hasSuffix "-darwin" system;
-
-    mkDarwinSystem = _hostName: variables:
-      nix-darwin.lib.darwinSystem {
-        system = variables.system;
-        specialArgs = {inherit variables;};
+    # Builds a nix-darwin or NixOS system from hosts/<hostName>.nix plus the shared modules.
+    mkSystem = hostName: {
+      system,
+      darwin ? false,
+    }:
+      (
+        if darwin
+        then nix-darwin.lib.darwinSystem
+        else nixpkgs.lib.nixosSystem
+      ) {
+        inherit system;
+        specialArgs = {inherit user nixpkgs-stable;};
         modules = [
+          ./modules/shared.nix
+          (
+            if darwin
+            then ./modules/darwin.nix
+            else ./modules/nixos.nix
+          )
+          ./hosts/${hostName}.nix
+          (
+            if darwin
+            then home-manager.darwinModules.home-manager
+            else home-manager.nixosModules.home-manager
+          )
           {
-            nixpkgs.overlays = [
-              (_final: prev: {
-                # Pin Rectangle to the stable channel instead of unstable.
-                rectangle = (import nixpkgs-stable {inherit (prev) system;}).rectangle;
-              })
-            ];
-          }
-          ./modules/common.nix
-          ./modules/darwin-specific.nix
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.extraSpecialArgs = {inherit variables;};
-            home-manager.users."${variables.userName}" = {
-              imports = [
-                ./modules/home.nix
-                nixvim.homeModules.nixvim
-              ];
-              home.username = variables.userName;
-              home.homeDirectory = "/Users/${variables.userName}";
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {inherit user;};
+              sharedModules = [nixvim.homeModules.nixvim];
+              users.${user.name} = import ./home;
             };
           }
         ];
       };
-
-    mkLinuxSystem = _hostName: variables:
-      nixpkgs.lib.nixosSystem {
-        system = variables.system;
-        specialArgs = {inherit variables;};
-        modules =
-          [
-            ./modules/common.nix
-            ./modules/linux-specific.nix
-          ]
-          ++ lib.optional variables.hasHardware ./hardware-configuration.nix
-          ++ [
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = {inherit variables;};
-              home-manager.users."${variables.userName}" = {
-                imports = [
-                  ./modules/home.nix
-                  nixvim.homeModules.nixvim
-                ];
-                home.username = variables.userName;
-                home.homeDirectory = "/home/${variables.userName}";
-              };
-            }
-          ];
-      };
   in {
-    devShells = let
-      systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-    in
-      lib.genAttrs systems (system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-            git
-            lazygit
-            neovim
-            ripgrep
-            fzf
-            bat
-            eza
-            zoxide
-            atuin
-            btop
-            fastfetch
-            claude-code
-          ];
-          shellHook = ''
-            export EDITOR=nvim
-            export SHELL=${pkgs.zsh}/bin/zsh
+    # Add a machine by creating hosts/<hostName>.nix and adding a line here.
+    darwinConfigurations = {
+      "Maxs-MacBook-Air" = mkSystem "Maxs-MacBook-Air" {
+        system = "aarch64-darwin";
+        darwin = true;
+      };
+    };
+
+    nixosConfigurations = {
+      # "my-nixos-box" = mkSystem "my-nixos-box" {system = "x86_64-linux";};
+    };
+
+    # `nix fmt` formats every .nix file in the repo.
+    formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.alejandra);
+
+    devShells = lib.genAttrs systems (system: let
+      # claude-code is unfree, so legacyPackages (which disallows unfree) can't be used here.
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+    in {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          git
+          lazygit
+          neovim
+          ripgrep
+          fzf
+          bat
+          eza
+          zoxide
+          atuin
+          btop
+          fastfetch
+          claude-code
+        ];
+        shellHook = ''
+          export EDITOR=nvim
+          export SHELL=${pkgs.zsh}/bin/zsh
+          # Only switch to zsh for an interactive `nix develop`, so `nix develop -c <cmd>`
+          # and direnv's `use flake` keep working.
+          if [[ $- == *i* ]]; then
             exec ${pkgs.zsh}/bin/zsh
-          '';
-        };
-      });
-
-    darwinConfigurations =
-      lib.mapAttrs mkDarwinSystem
-      (lib.filterAttrs (_: v: isDarwin v.system) hosts);
-
-    nixosConfigurations =
-      lib.mapAttrs mkLinuxSystem
-      (lib.filterAttrs (_: v: !isDarwin v.system) hosts);
+          fi
+        '';
+      };
+    });
   };
 }
