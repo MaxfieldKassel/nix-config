@@ -27,14 +27,8 @@
         htop = "btop";
         tree = "eza --tree -A --total-size --long --no-time";
 
-        # z is a replacement for cd written in rust with some advanced features.
-        cd = "z";
-
-        # zi uses fzf to find a file to enter.
-        ci = "zi";
-
-        # Override the nix-shell to use zsh to allow for oh-my-posh to run.
-        nix-shell = "nix-shell --run zsh";
+        # cdi (from zoxide, see cli.nix) uses fzf to pick a directory to enter.
+        ci = "cdi";
 
         ncdu = "gdu";
         lg = "lazygit";
@@ -81,15 +75,15 @@
               return 1
           fi
 
-          # If any part of the command fails, return an error.
-          setopt LOCAL_OPTIONS ERR_EXIT
+          # If any part of the command fails, stop and return an error
+          # (ERR_EXIT would close the whole terminal instead).
+          setopt LOCAL_OPTIONS ERR_RETURN
 
           mkdir -p "$1" && cd "$1"
 
           nix flake new -t "github:nix-community/nix-direnv" .
           nix flake update
 
-          echo "use flake" >> .envrc
           direnv allow
           direnv reload
 
@@ -97,7 +91,7 @@
 
           # Create a basic git repository and add gitignore and commit files.
           git init
-          git add .envrc  .git  .gitignore flake.nix flake.lock
+          git add .envrc .gitignore flake.nix flake.lock
           git commit -m "Init"
       }
 

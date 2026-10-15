@@ -33,7 +33,7 @@ preview_cmd='
         # Text file: display using bat
         bat --color=always --style=plain --line-range=:500 "$realpath"
         ;;
-      JSON/*)
+      application/json)
         # JSON file: also display with bat
         bat --color=always --style=plain --line-range=:500 "$realpath"
         ;;
@@ -48,25 +48,12 @@ preview_cmd='
 # Apply file/folder preview for these commands
 zstyle ":fzf-tab:complete:(z|cd|eza|bat|cat|ls|grep|rg):*" fzf-preview "$preview_cmd"
 
-# ---------------------------------------
-# Git checkout: show branches + commits
-# ---------------------------------------
-zstyle ":fzf-tab:complete:git-checkout:*" fzf-preview '
-  current_item="$realpath"
-
-  # If a branch is selected, show the five most recent commits
-  if git branch --color=always | grep -qE "^\*? *$current_item$"; then
-    printf "\e[1;34mRecent commits on %s:\e[0m\n\n" "$current_item"
-    git log --oneline -n 5 "$current_item"
-  fi
-'
-
 # ----------------------------------------------------
 # Kill/ps: show process info when selecting a process
 # ----------------------------------------------------
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+  '[[ $group == "[process ID]" ]] && ps -p $word -o command= -ww'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
 
 # -------------------------------------------------------------

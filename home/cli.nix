@@ -69,7 +69,15 @@
     extraOptions = ["-h"];
   };
 
+  # zoxide replaces `cd` itself (and adds `cdi` for the fzf picker), so completion works too.
   programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    options = ["--cmd cd"];
+  };
+
+  # Keeps zsh (and oh-my-posh) inside `nix-shell` and `nix develop`, without breaking `--run`.
+  programs.nix-your-shell = {
     enable = true;
     enableZshIntegration = true;
   };
