@@ -62,7 +62,7 @@
           }
         ];
       };
-  in {
+
     # Add a machine by creating hosts/<hostName>.nix and adding a line here.
     darwinConfigurations = {
       "Maxs-MacBook-Air" = mkSystem "Maxs-MacBook-Air" {
@@ -74,6 +74,26 @@
     nixosConfigurations = {
       # "my-nixos-box" = mkSystem "my-nixos-box" {system = "x86_64-linux";};
     };
+
+    # Every machine's full system build, keyed by the platform it builds on.
+    systemChecks = system:
+      lib.mapAttrs' (name: c: lib.nameValuePair "darwin-${name}" c.system)
+      (lib.filterAttrs (_: c: c.pkgs.stdenv.hostPlatform.system == system) darwinConfigurations)
+      // lib.mapAttrs' (name: c: lib.nameValuePair "nixos-${name}" c.config.system.build.toplevel)
+      (lib.filterAttrs (_: c: c.pkgs.stdenv.hostPlatform.system == system) nixosConfigurations);
+  in {
+    inherit darwinConfigurations nixosConfigurations;
+
+    # `nix flake check` builds every machine for the current platform and checks formatting.
+    checks = lib.genAttrs systems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      systemChecks system
+      // {
+        formatting = pkgs.runCommand "check-formatting" {} ''
+          ${pkgs.alejandra}/bin/alejandra --check ${./.} && touch $out
+        '';
+      });
 
     # `nix fmt` formats every .nix file in the repo.
     formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.alejandra);

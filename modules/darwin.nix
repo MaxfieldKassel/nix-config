@@ -226,6 +226,31 @@ in {
     fi
   '';
 
+  # `nh darwin switch` (the `rebuild` alias) builds this repo, shows what changed and switches.
+  programs.nh = {
+    enable = true;
+    flake = "/Users/${user.name}/${user.flakeDir}";
+  };
+
+  # Weekly cleanup of old generations and unused store paths. nix-darwin's own
+  # programs.nh.clean needs nix.enable, which is off because Determinate manages Nix.
+  launchd.daemons.nh-clean = {
+    command = "${pkgs.nh}/bin/nh clean all --keep 5 --keep-since 14d";
+    serviceConfig = {
+      StartCalendarInterval = [
+        {
+          Weekday = 0;
+          Hour = 12;
+          Minute = 0;
+        }
+      ];
+      StandardOutPath = "/var/log/nh-clean.log";
+      StandardErrorPath = "/var/log/nh-clean.log";
+      # nh calls nix, which Determinate Nix installs here.
+      EnvironmentVariables.PATH = "/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+    };
+  };
+
   launchd.agents.colima = {
     # Run in the foreground so launchd supervises the VM; a plain `colima start`
     # exits once the VM is up, which made KeepAlive relaunch it every ~10s.

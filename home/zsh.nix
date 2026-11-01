@@ -40,7 +40,7 @@
         ssh = "tssh";
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-        rebuild = "sudo darwin-rebuild switch --flake ~/.config/nixos && source ~/.zshrc";
+        rebuild = "nh darwin switch"; # uses NH_FLAKE (modules/darwin.nix); new shells pick up changes
       };
 
     plugins = [
