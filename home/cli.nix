@@ -50,10 +50,6 @@
 
     # GitHub Copilot CLI is a standalone `copilot` binary, not a gh extension.
     github-copilot-cli
-
-    # An alternative ssh client with trzsz support
-    # https://github.com/trzsz/trzsz-ssh
-    trzsz-ssh
   ];
 
   programs.bat = {

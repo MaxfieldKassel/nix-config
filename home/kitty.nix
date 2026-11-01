@@ -1,4 +1,9 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  user,
+  ...
+}: {
   programs.kitty = {
     enable = true;
     font = {
@@ -8,10 +13,13 @@
     };
 
     settings = {
-      font_features = "Hack Nerd Font +liga +calt";
       background_opacity = 0.9;
       window_padding_width = 5;
       undercurl_style = "thick-dense";
+
+      # splits: ctrl+shift+e / ctrl+shift+s split side-by-side / top-and-bottom.
+      # stack: ctrl+option+z zooms the current split to the whole tab and back.
+      enabled_layouts = "splits,stack";
 
       background = "#131313";
       foreground = "#d6dae4";
@@ -40,7 +48,6 @@
       tab_bar_min_tabs = 2;
       tab_bar_edge = "top";
       tab_bar_style = "separator";
-      tab_bar_separator_style = "line";
       tab_bar_background = "#282a36";
 
       active_tab_foreground = "#FFFFFF";
@@ -56,7 +63,6 @@
       detect_urls = true;
       # No keybinding needs this; "yes" would let any program in the terminal (even over SSH) control kitty.
       allow_remote_control = "no";
-      shell_integration = true;
 
       confirm_os_window_close = 0; # Don't confirm when closing a window
     };
@@ -64,13 +70,15 @@
     extraConfig = ''
       modify_font underline_position 0
       modify_font underline_thickness 100%
-
-      clipboard_control c
-      clipboard_control v
     '';
 
     keybindings = {
-      "ctrl+shift+t" = "new_tab";
+      # New tabs, windows and splits all open in the current folder.
+      "ctrl+shift+t" = "new_tab_with_cwd";
+      "super+t" = "new_tab_with_cwd";
+      "super+shift+t" = "new_tab_with_cwd";
+      "kitty_mod+enter" = "new_window_with_cwd";
+      "super+enter" = "new_window_with_cwd";
       "ctrl+shift+w" = "close_tab";
       "ctrl+shift+right" = "next_tab";
       "ctrl+shift+left" = "previous_tab";
@@ -87,14 +95,15 @@
       "cmd+9" = "goto_tab 9";
       "cmd+0" = "goto_tab 0";
 
-      "ctrl+shift+e" = "new_window";
-      "ctrl+shift+s" = "new_window";
+      "ctrl+shift+e" = "launch --location=vsplit --cwd=current"; # side by side
+      "ctrl+shift+s" = "launch --location=hsplit --cwd=current"; # top and bottom
+      # Move between splits with kitty's defaults: ctrl+shift+] / ctrl+shift+[.
+      # (ctrl+option+arrows belong to Rectangle.)
+      "ctrl+alt+z" = "toggle_layout stack"; # zoom the current split
       "ctrl+shift+f" = "toggle_fullscreen";
 
-      "super+shift+t" = "launch --type=tab --cwd=current";
-      "super+t" = "launch --type=tab --cwd=current";
-
-      "kitty_mod+," = "launch --type=window nvim ~/.config/kitty/kitty.conf";
+      # kitty.conf is generated (read-only), so open the file it comes from.
+      "kitty_mod+," = "launch --type=tab --cwd=${config.home.homeDirectory}/${user.flakeDir} nvim home/kitty.nix";
     };
   };
 }

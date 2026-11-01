@@ -54,19 +54,8 @@ in {
     libreoffice-bin
     rectangle
     maccy
-    mas
     colima
   ];
-
-  # homebrew.enable = true;
-  # homebrew.masApps = {
-  #   "Grocery" = 1195676848;
-  #   "Spark Desktop" = 6445813049;
-  #   "Things" = 904280696;
-  #   "Bitwarden" = 1352778147;
-  #   "AutoMounter" = 1160435653;
-  #   "WireGuard" = 1451685025;
-  # };
 
   # App settings are written as the primary user (activation scripts run as root, so
   # `defaults write` there would only change root's preferences).
@@ -181,7 +170,6 @@ in {
       persistent-apps = [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
-        # "${brave}/Applications/Brave Browser.app"
         "${pkgs.google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps
@@ -225,6 +213,31 @@ in {
       echo >&2 "terminal Full Disk Access in System Settings > Privacy & Security, then rebuild."
     fi
   '';
+
+  # `nh darwin switch` (the `rebuild` alias) builds this repo, shows what changed and switches.
+  programs.nh = {
+    enable = true;
+    flake = "/Users/${user.name}/${user.flakeDir}";
+  };
+
+  # Weekly cleanup of old generations and unused store paths. nix-darwin's own
+  # programs.nh.clean needs nix.enable, which is off because Determinate manages Nix.
+  launchd.daemons.nh-clean = {
+    command = "${pkgs.nh}/bin/nh clean all --keep 5 --keep-since 14d";
+    serviceConfig = {
+      StartCalendarInterval = [
+        {
+          Weekday = 0;
+          Hour = 12;
+          Minute = 0;
+        }
+      ];
+      StandardOutPath = "/var/log/nh-clean.log";
+      StandardErrorPath = "/var/log/nh-clean.log";
+      # nh calls nix, which Determinate Nix installs here.
+      EnvironmentVariables.PATH = "/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+    };
+  };
 
   launchd.agents.colima = {
     # Run in the foreground so launchd supervises the VM; a plain `colima start`
