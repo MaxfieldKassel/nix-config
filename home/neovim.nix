@@ -65,7 +65,19 @@ in {
       bashls.enable = true;
       terraformls.enable = true;
       jsonls.enable = true;
-      yamlls.enable = true;
+      # Kubernetes schema (completion + validation) for manifests in the usual places; other
+      # YAML (GitHub Actions, compose, ...) keeps its SchemaStore schema. Any file can opt in
+      # with a `# yaml-language-server: $schema=...` modeline.
+      yamlls = {
+        enable = true;
+        config.settings.yaml.schemas.kubernetes = [
+          "*.k8s.yaml"
+          "**/k8s/**/*.{yaml,yml}"
+          "**/kubernetes/**/*.{yaml,yml}"
+          "**/manifests/**/*.{yaml,yml}"
+          "**/deploy/**/*.{yaml,yml}"
+        ];
+      };
     };
 
     keymaps = [

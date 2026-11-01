@@ -7,6 +7,7 @@
     ./neovim.nix
     ./kitty.nix
     ./vscode.nix
+    ./kubernetes.nix
   ];
 
   home.stateVersion = "25.11";
