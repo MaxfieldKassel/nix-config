@@ -13,6 +13,10 @@
       pull.rebase = true;
       push.autoSetupRemote = true;
       push.default = "simple";
+      rebase.autoStash = true; # pull --rebase works with uncommitted changes
+      merge.conflictStyle = "zdiff3"; # conflicts also show the common ancestor
+      diff.algorithm = "histogram"; # clearer diffs for moved/changed blocks
+      rerere.enabled = true; # reuse a conflict resolution if the same conflict comes back
 
       alias = {
         co = "checkout";

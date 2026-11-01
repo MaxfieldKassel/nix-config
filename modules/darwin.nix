@@ -54,19 +54,8 @@ in {
     libreoffice-bin
     rectangle
     maccy
-    mas
     colima
   ];
-
-  # homebrew.enable = true;
-  # homebrew.masApps = {
-  #   "Grocery" = 1195676848;
-  #   "Spark Desktop" = 6445813049;
-  #   "Things" = 904280696;
-  #   "Bitwarden" = 1352778147;
-  #   "AutoMounter" = 1160435653;
-  #   "WireGuard" = 1451685025;
-  # };
 
   # App settings are written as the primary user (activation scripts run as root, so
   # `defaults write` there would only change root's preferences).
@@ -181,7 +170,6 @@ in {
       persistent-apps = [
         # Browsers
         "/System/Cryptexes/App/System/Applications/Safari.app"
-        # "${brave}/Applications/Brave Browser.app"
         "${pkgs.google-chrome}/Applications/Google Chrome.app"
 
         # Communication Apps

@@ -46,7 +46,7 @@ preview_cmd='
 '
 
 # Apply file/folder preview for these commands
-zstyle ":fzf-tab:complete:(z|cd|eza|bat|cat|ls|grep|rg):*" fzf-preview "$preview_cmd"
+zstyle ":fzf-tab:complete:(cd|eza|bat|cat|ls|grep|rg):*" fzf-preview "$preview_cmd"
 
 # ----------------------------------------------------
 # Kill/ps: show process info when selecting a process

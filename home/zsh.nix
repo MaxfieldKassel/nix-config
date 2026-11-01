@@ -37,7 +37,6 @@
         gitc = "git commit";
         gitco = "git checkout";
         neofetch = "fastfetch";
-        ssh = "tssh";
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
         rebuild = "nh darwin switch"; # uses NH_FLAKE (modules/darwin.nix); new shells pick up changes
@@ -93,6 +92,20 @@
           git init
           git add .envrc .gitignore flake.nix flake.lock
           git commit -m "Init"
+      }
+
+      # `ssh` with no arguments picks a host from ~/.ssh/config with fzf (previewing its
+      # resolved settings); with arguments it is plain OpenSSH. `ssh <Tab>` also fuzzy-completes hosts.
+      function ssh() {
+          if (( $# )); then
+              command ssh "$@"
+              return
+          fi
+          local host
+          host=$(awk 'tolower($1) == "host" { for (i = 2; i <= NF; i++) if ($i !~ /[*?!]/) print $i }' \
+              ~/.ssh/config ~/.ssh/config.d/*(N) 2>/dev/null | sort -u |
+              fzf --prompt 'ssh> ' --preview 'command ssh -G {} | grep -E "^(hostname|user|port|identityfile|proxyjump) "') || return
+          command ssh "$host"
       }
 
       # VSCode shell integration
