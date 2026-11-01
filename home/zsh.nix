@@ -1,6 +1,8 @@
 {
+  config,
   pkgs,
   lib,
+  user,
   ...
 }: {
   programs.oh-my-posh = {
@@ -39,7 +41,9 @@
         neofetch = "fastfetch";
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
-        rebuild = "nh darwin switch"; # uses NH_FLAKE (modules/darwin.nix); new shells pick up changes
+        # The repo path is passed explicitly: NH_FLAKE only reaches shells started after a
+        # terminal restart (nix-darwin loads its variables once per terminal session).
+        rebuild = "nh darwin switch ${config.home.homeDirectory}/${user.flakeDir}";
       };
 
     plugins = [
