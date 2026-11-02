@@ -1,7 +1,19 @@
-{user, ...}: {
+{
+  config,
+  user,
+  ...
+}: {
   programs.git = {
     enable = true;
     lfs.enable = true;
+
+    # Sign every commit and tag with the SSH key (add the same public key on GitHub as a
+    # "Signing key" so commits show as Verified).
+    signing = {
+      format = "ssh";
+      key = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
+      signByDefault = true;
+    };
 
     settings = {
       user.name = user.fullName;
