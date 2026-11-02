@@ -39,6 +39,7 @@
         gitc = "git commit";
         gitco = "git checkout";
         neofetch = "fastfetch";
+        watch = "viddy";
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
         # The repo path is passed explicitly: NH_FLAKE only reaches shells started after a

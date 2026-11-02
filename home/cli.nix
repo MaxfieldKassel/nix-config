@@ -13,6 +13,10 @@
     # https://github.com/dundee/gdu
     gdu
 
+    # Modern `watch` (nixpkgs' procps watch is Linux-only); aliased to `watch` in zsh.nix.
+    # https://github.com/sachaos/viddy
+    viddy
+
     # TLDR Replacement written in Rust
     # https://github.com/tldr-pages/tlrc
     tlrc
@@ -51,6 +55,14 @@
     # GitHub Copilot CLI is a standalone `copilot` binary, not a gh extension.
     github-copilot-cli
   ];
+
+  # `, <command>` runs any nixpkgs program without installing it, and a command that isn't
+  # installed says which package provides it. Uses nix-index-database's prebuilt weekly index.
+  programs.nix-index = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  programs.nix-index-database.comma.enable = true;
 
   programs.bat = {
     enable = true;
