@@ -12,6 +12,11 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Prebuilt weekly nix-index database (for `,` and command-not-found).
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -20,6 +25,7 @@
     nix-darwin,
     home-manager,
     nixvim,
+    nix-index-database,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -56,7 +62,10 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {inherit user;};
-              sharedModules = [nixvim.homeModules.nixvim];
+              sharedModules = [
+                nixvim.homeModules.nixvim
+                nix-index-database.homeModules.nix-index
+              ];
               users.${user.name} = import ./home;
             };
           }

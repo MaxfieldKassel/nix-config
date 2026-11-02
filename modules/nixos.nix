@@ -42,6 +42,9 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # `trash` moves files to the trash instead of deleting them (macOS ships its own /usr/bin/trash).
+  environment.systemPackages = [pkgs.trash-cli];
+
   # Virtualization and Docker
   virtualisation.docker.enable = true;
 }
