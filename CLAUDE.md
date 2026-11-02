@@ -9,8 +9,8 @@ This is a cross-platform Nix flake configuration supporting both macOS (nix-darw
 ## Apply Configuration
 
 ```bash
-# macOS (nix-darwin); `rebuild` is an alias for this, using NH_FLAKE
-nh darwin switch
+# macOS (nix-darwin); `rebuild` is an alias for this
+nh darwin switch ~/.config/nixos
 
 # NixOS
 sudo nixos-rebuild switch --flake .

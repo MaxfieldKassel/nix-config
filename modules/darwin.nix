@@ -147,6 +147,8 @@ in {
 
   # Enable sudo touch id authentication for easier password entry
   security.pam.services.sudo_local.touchIdAuth = true;
+  # Make Touch ID work for sudo inside tmux and other terminal multiplexers (pam_reattach).
+  security.pam.services.sudo_local.reattach = true;
   system.primaryUser = user.name;
   # macOS defaults and services
   system.defaults = {
