@@ -55,6 +55,9 @@ in {
     rectangle
     maccy
     colima
+    # Provides docker-credential-osxkeychain, used by `"credsStore": "osxkeychain"` in
+    # ~/.docker/config.json; without it `docker login` fails with "executable file not found".
+    docker-credential-helpers
   ];
 
   # App settings are written as the primary user (activation scripts run as root, so
