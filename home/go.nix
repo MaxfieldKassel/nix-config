@@ -1,5 +1,11 @@
 # Go: toolchain, language server, linter and debugger, plus Neovim and VS Code support.
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  dapGo.delve.path = lib.getExe pkgs.delve;
+in {
   # Installs Go and sets GOPATH (~/go); `go install`ed tools land in ~/go/bin.
   programs.go = {
     enable = true;
@@ -46,8 +52,18 @@
       gowork
     ];
 
-    # `go test` under neotest (\n…), including table-driven subtests.
-    plugins.neotest.adapters.golang.enable = true;
+    # `go test` under neotest (\n…), including table-driven subtests. It sets dap-go up again
+    # for \nd, so it needs the same delve settings.
+    plugins.neotest.adapters.golang = {
+      enable = true;
+      settings.dap_go_opts = dapGo;
+    };
+
+    # Debugging with delve (\d…): \dc on a main package, or \nd on a test.
+    plugins.dap-go = {
+      enable = true;
+      settings = dapGo;
+    };
   };
 
   programs.vscode.profiles.default = {

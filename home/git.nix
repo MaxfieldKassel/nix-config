@@ -1,8 +1,26 @@
 {
   config,
+  lib,
+  pkgs,
   user,
   ...
-}: {
+}: let
+  signingKey = config.programs.git.signing.key;
+  # Lists the keys trusted to sign commits, so `git log --show-signature` and `git verify-commit`
+  # can check them ("Good signature for <email>").
+  allowedSigners = "${config.xdg.configHome}/git/allowed_signers";
+in {
+  # Written from your public key at each rebuild, since the key itself isn't in this repo.
+  home.activation.gitAllowedSigners = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    if [ -r ${lib.escapeShellArg signingKey} ]; then
+      run mkdir -p ${lib.escapeShellArg (dirOf allowedSigners)}
+      run ${pkgs.writeShellScript "write-git-allowed-signers" ''
+      printf '%s namespaces="git" %s\n' ${lib.escapeShellArg user.email} "$(cat ${lib.escapeShellArg signingKey})" \
+        > ${lib.escapeShellArg allowedSigners}
+    ''}
+    fi
+  '';
+
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -18,6 +36,7 @@
     settings = {
       user.name = user.fullName;
       user.email = user.email;
+      gpg.ssh.allowedSignersFile = allowedSigners;
 
       core.editor = "nvim";
       init.defaultBranch = "main";
