@@ -45,6 +45,9 @@
       gosum
       gowork
     ];
+
+    # `go test` under neotest (\n…), including table-driven subtests.
+    plugins.neotest.adapters.golang.enable = true;
   };
 
   programs.vscode.profiles.default = {
