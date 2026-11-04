@@ -57,7 +57,8 @@ Old generations and unused store paths are cleaned weekly (`nh clean all`, keepi
 | `flake.nix` | Inputs, the `mkSystem` helper, one line per machine, checks, formatter, dev shell |
 | `user.nix` | Username, name, email, and where the repo is cloned |
 | `hosts/` | One file per machine: hostname, `stateVersion`, hardware-specific bits |
-| `modules/shared.nix` | System config for every machine (Docker, fonts, …) |
+| `modules/shared.nix` | System config for every machine (Docker, …) |
+| `modules/theme.nix` | Colour theme and terminal font for every app (Stylix); change `scheme` to switch |
 | `modules/darwin.nix` | macOS: apps, system defaults, Dock, Rectangle/Maccy settings, Colima, nh |
 | `modules/nixos.nix`, `modules/nixos-desktop.nix` | NixOS base config, and the desktop for machines with a screen |
 | `home/` | home-manager: one file per program (`cli.nix`, `zsh.nix`, `neovim.nix`, `git.nix`, `kitty.nix`, `vscode.nix`, `kubernetes.nix`) |

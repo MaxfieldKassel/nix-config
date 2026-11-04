@@ -5,11 +5,71 @@
   user,
   ...
 }: {
+  # The "half-life" prompt layout (https://ohmyposh.dev/docs/themes), coloured from the Stylix
+  # theme (modules/theme.nix) so it matches the terminal:
+  #   maxkassel in ~/src/app on main ● ~1 λ
   programs.oh-my-posh = {
     enable = true;
-    # Themes from: https://ohmyposh.dev/docs/themes
-    useTheme = "half-life";
     enableZshIntegration = true;
+    settings = with config.lib.stylix.colors.withHashtag; {
+      "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json";
+      version = 4;
+      blocks = [
+        {
+          type = "prompt";
+          alignment = "left";
+          segments = [
+            {
+              type = "session";
+              style = "plain";
+              foreground = base0E;
+              template = "{{ .UserName }} ";
+            }
+            {
+              type = "text";
+              style = "plain";
+              foreground = base05;
+              template = "in ";
+            }
+            {
+              type = "path";
+              style = "plain";
+              foreground = base0B;
+              options.style = "full";
+              template = "{{ .Path }} ";
+            }
+            {
+              type = "git";
+              style = "plain";
+              foreground = base0C;
+              # No icons, as in half-life.
+              options =
+                {fetch_status = true;}
+                // lib.genAttrs [
+                  "branch_icon"
+                  "branch_ahead_icon"
+                  "branch_behind_icon"
+                  "branch_gone_icon"
+                  "branch_identical_icon"
+                  "cherry_pick_icon"
+                  "commit_icon"
+                  "merge_icon"
+                  "rebase_icon"
+                  "revert_icon"
+                  "tag_icon"
+                ] (_: "");
+              template = "<${base05}>on</> {{ .HEAD }}{{ if .Staging.Changed }}<${base0B}> ● {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<${base09}> ● {{ .Working.String }}</>{{ end }} ";
+            }
+            {
+              type = "text";
+              style = "plain";
+              foreground = base09;
+              template = "λ ";
+            }
+          ];
+        }
+      ];
+    };
   };
 
   programs.zsh = {

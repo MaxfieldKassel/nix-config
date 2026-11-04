@@ -46,6 +46,8 @@
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
+    # Same syntax colours as bat, which Stylix themes (modules/theme.nix).
+    options.syntax-theme = config.programs.bat.config.theme;
   };
 
   programs.lazygit = {
