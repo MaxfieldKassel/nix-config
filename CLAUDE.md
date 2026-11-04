@@ -39,7 +39,9 @@ CI (`.github/workflows/check.yml`) runs `nix flake check` on macOS for every pus
 
 **`hosts/<hostName>.nix`** — One real module per machine, holding only machine-specific settings: `networking.hostName`, `system.stateVersion`, and on NixOS the bootloader, `hardware-configuration.nix` import, and `../modules/nixos-desktop.nix` if it has a screen. To add a machine, create the file and add a `mkSystem` line in `flake.nix`.
 
-**`modules/shared.nix`** — System-level config for both platforms: Docker/OpenVPN, fonts, `allowUnfree`.
+**`modules/shared.nix`** — System-level config for both platforms: Docker/OpenVPN, `allowUnfree`.
+
+**`modules/theme.nix`** — Stylix: one base16 scheme (One Dark) and the Hack Nerd Font for kitty, bat/delta, btop, fzf, lazygit, k9s, VS Code and the oh-my-posh prompt (built in `home/zsh.nix` from `config.lib.stylix.colors`). Neovim keeps onedark.nvim (Stylix's nixvim target is off). The `stylix` flake input's own inputs are locked transitively; it follows `nixpkgs`.
 
 **`modules/darwin.nix`** — macOS-only: GUI apps (Rectangle pinned to `nixpkgs-stable`), system defaults (Finder, Dock, screensaver), app settings (Rectangle via `system.defaults.CustomUserPreferences`; Maccy best-effort in `postActivation` because it is sandboxed), Colima launchd agent, `nh` (with a weekly `nh clean all` launchd daemon).
 

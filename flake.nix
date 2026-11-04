@@ -17,6 +17,11 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # One colour theme for every app, from a single base16 scheme (modules/theme.nix).
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -26,6 +31,7 @@
     home-manager,
     nixvim,
     nix-index-database,
+    stylix,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -46,10 +52,16 @@
         specialArgs = {inherit user nixpkgs-stable;};
         modules = [
           ./modules/shared.nix
+          ./modules/theme.nix
           (
             if darwin
             then ./modules/darwin.nix
             else ./modules/nixos.nix
+          )
+          (
+            if darwin
+            then stylix.darwinModules.stylix
+            else stylix.nixosModules.stylix
           )
           ./hosts/${hostName}.nix
           (

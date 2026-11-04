@@ -1,19 +1,13 @@
 {
-  pkgs,
   config,
   user,
   ...
 }: {
   programs.kitty = {
     enable = true;
-    font = {
-      name = "Hack Nerd Font";
-      package = pkgs.nerd-fonts.hack;
-      size = 14.0;
-    };
+    # Font, colours and background opacity come from Stylix (modules/theme.nix).
 
     settings = {
-      background_opacity = 0.9;
       window_padding_width = 5;
       undercurl_style = "thick-dense";
 
@@ -21,41 +15,11 @@
       # stack: ctrl+option+z zooms the current split to the whole tab and back.
       enabled_layouts = "splits,stack";
 
-      background = "#131313";
-      foreground = "#d6dae4";
-      cursor = "#b9b9b9";
-      selection_background = "#ffaf00";
-      selection_foreground = "#131313";
-
-      color0 = "#1f1f1f";
-      color1 = "#f71118";
-      color2 = "#2cc55d";
-      color3 = "#ecb90f";
-      color4 = "#2a84d2";
-      color5 = "#4e59b7";
-      color6 = "#0f80d5";
-      color7 = "#d6dae4";
-      color8 = "#d6dae4";
-      color9 = "#de342e";
-      color10 = "#1dd260";
-      color11 = "#f2bd09";
-      color12 = "#0f80d5";
-      color13 = "#524fb9";
-      color14 = "#0f7cda";
-      color15 = "#ffffff";
-
       tab_separator = " |";
       tab_bar_min_tabs = 2;
       tab_bar_edge = "top";
       tab_bar_style = "separator";
-      tab_bar_background = "#282a36";
-
-      active_tab_foreground = "#FFFFFF";
-      active_tab_background = "#41C4FF";
       active_tab_font_style = "bold";
-
-      inactive_tab_foreground = "#FFFFFF";
-      inactive_tab_background = "#83769C";
       inactive_tab_font_style = "normal";
 
       scrollback_lines = 10000;
