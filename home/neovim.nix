@@ -1,10 +1,27 @@
-{pkgs, ...}: let
+{
+  config,
+  osConfig,
+  pkgs,
+  user,
+  ...
+}: let
   # Keymap with a description, so which-key can show what it does.
   mkKey = mode: key: action: desc: {
     inherit mode key action;
     options.desc = desc;
   };
   raw = code: {__raw = code;};
+
+  # This machine's configuration in the repo, so nixd can complete and document its options.
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  flake = ''(builtins.getFlake "${config.home.homeDirectory}/${user.flakeDir}")'';
+  machine = "${flake}.${
+    if isDarwin
+    then "darwinConfigurations"
+    else "nixosConfigurations"
+  }.\"${osConfig.networking.hostName}\"";
+  # Telescope searches hidden files too (e.g. .github/), but never .git/.
+  rgHidden = ["--hidden" "--glob=!**/.git/*"];
 in {
   programs.nixvim = {
     enable = true;
@@ -60,7 +77,22 @@ in {
       pyright.enable = true;
       ruff.enable = true;
       ts_ls.enable = true;
-      nixd.enable = true;
+      # Completion, hover docs and checks for this repo's nix-darwin/NixOS and home-manager options.
+      nixd = {
+        enable = true;
+        config.settings.nixd = {
+          nixpkgs.expr = "import ${flake}.inputs.nixpkgs { }";
+          options = {
+            # "nixos" replaces nixd's built-in NixOS option set instead of duplicating it.
+            ${
+              if isDarwin
+              then "nix-darwin"
+              else "nixos"
+            }.expr = "${machine}.options";
+            home-manager.expr = "${machine}.options.home-manager.users.type.getSubOptions [ ]";
+          };
+        };
+      };
       lua_ls.enable = true;
       bashls.enable = true;
       terraformls.enable = true;
@@ -92,6 +124,8 @@ in {
       (mkKey "n" "<leader>fr" "<cmd>Telescope lsp_references<CR>" "References")
       (mkKey "n" "<leader>fs" "<cmd>Telescope lsp_document_symbols<CR>" "Symbols")
       (mkKey "n" "<leader>fd" "<cmd>Telescope diagnostics<CR>" "Diagnostics")
+      (mkKey "n" "<leader>fo" "<cmd>Telescope oldfiles<CR>" "Recent files")
+      (mkKey "n" "<leader>f/" "<cmd>Telescope current_buffer_fuzzy_find<CR>" "Search in file")
 
       # Code
       (mkKey "n" "gd" (raw "vim.lsp.buf.definition") "Go to definition")
@@ -102,6 +136,10 @@ in {
       (mkKey "n" "<leader>gH" "<cmd>Gitsigns preview_hunk<CR>" "Preview hunk")
       (mkKey "n" "<leader>gB" "<cmd>Gitsigns toggle_current_line_blame<CR>" "Toggle line blame")
       (mkKey "n" "<leader>gD" "<cmd>Gitsigns diffthis<CR>" "Diff file")
+      (mkKey "n" "]h" (raw ''function() require("gitsigns").nav_hunk("next") end'') "Next git change")
+      (mkKey "n" "[h" (raw ''function() require("gitsigns").nav_hunk("prev") end'') "Previous git change")
+      (mkKey "n" "<leader>gs" "<cmd>Gitsigns stage_hunk<CR>" "Stage/unstage change")
+      (mkKey "n" "<leader>gr" "<cmd>Gitsigns reset_hunk<CR>" "Undo change")
 
       # Windows
       (mkKey "n" "<leader>wv" "<cmd>vsplit<CR>" "Split vertically")
@@ -166,11 +204,21 @@ in {
             side = "left";
           };
           filters.dotfiles = false;
+          # Highlight the file you're editing in the tree, opening its folders as you switch.
+          update_focused_file.enable = true;
+          # Mark files with LSP errors/warnings in the tree.
+          diagnostics.enable = true;
         };
       };
 
       telescope = {
         enable = true;
+        settings = {
+          defaults.vimgrep_arguments =
+            ["rg" "--color=never" "--no-heading" "--with-filename" "--line-number" "--column" "--smart-case"]
+            ++ rgHidden;
+          pickers.find_files.find_command = ["rg" "--files" "--color=never"] ++ rgHidden;
+        };
         extensions = {
           fzf-native.enable = true;
           undo.enable = true;
@@ -264,6 +312,15 @@ in {
         };
       };
     };
+
+    # Spell check where you write prose (z= suggests fixes, zg adds a word).
+    autoCmd = [
+      {
+        event = "FileType";
+        pattern = ["gitcommit" "markdown"];
+        command = "setlocal spell";
+      }
+    ];
 
     extraPlugins = with pkgs.vimPlugins; [
       vim-be-good
