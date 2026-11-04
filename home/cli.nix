@@ -71,6 +71,9 @@
 
   programs.bat = {
     enable = true;
+    # batman: man pages with colour (aliased to `man` in zsh.nix); run bare to pick a page with fzf.
+    # batgrep: ripgrep results shown through bat, with highlighting and context.
+    extraPackages = with pkgs.bat-extras; [batman batgrep];
   };
 
   programs.eza = {

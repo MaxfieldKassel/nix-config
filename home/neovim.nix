@@ -146,6 +146,16 @@ in {
       (mkKey "n" "<leader>fd" "<cmd>Telescope diagnostics<CR>" "Diagnostics")
       (mkKey "n" "<leader>fo" "<cmd>Telescope oldfiles<CR>" "Recent files")
       (mkKey "n" "<leader>f/" "<cmd>Telescope current_buffer_fuzzy_find<CR>" "Search in file")
+      (mkKey "n" "<leader>ft" "<cmd>TodoTelescope<CR>" "TODO / FIXME comments")
+
+      # Jump (flash): type s and 1-2 characters, then the label shown at the place you want.
+      (mkKey ["n" "x" "o"] "s" (raw ''function() require("flash").jump() end'') "Flash jump")
+      (mkKey ["n" "o"] "S" (raw ''function() require("flash").treesitter() end'') "Flash select code block")
+      (mkKey "o" "r" (raw ''function() require("flash").remote() end'') "Flash remote (e.g. yr)")
+
+      # Files as text (oil): - opens the current file's folder; rename, move or delete by
+      # editing the lines, then :w to apply.
+      (mkKey "n" "-" "<cmd>Oil<CR>" "Open folder as text (oil)")
 
       # Code
       (mkKey "n" "gd" (raw "vim.lsp.buf.definition") "Go to definition")
@@ -167,6 +177,7 @@ in {
       (mkKey "n" "<leader>xs" "<cmd>Trouble symbols toggle focus=false<CR>" "Symbols outline")
       (mkKey "n" "<leader>xr" "<cmd>Trouble lsp toggle focus=false win.position=right<CR>" "References / definitions")
       (mkKey "n" "<leader>xq" "<cmd>Trouble qflist toggle<CR>" "Quickfix list")
+      (mkKey "n" "<leader>xt" "<cmd>Trouble todo toggle<CR>" "TODO / FIXME comments")
 
       # Tests (neotest; the adapters are set per language)
       (mkKey "n" "<leader>nn" (raw ''function() require("neotest").run.run() end'') "Run nearest test")
@@ -180,6 +191,22 @@ in {
       (mkKey "n" "<leader>nO" (raw ''function() require("neotest").output_panel.toggle() end'') "Output panel")
       (mkKey "n" "]n" (raw ''function() require("neotest").jump.next({ status = "failed" }) end'') "Next failed test")
       (mkKey "n" "[n" (raw ''function() require("neotest").jump.prev({ status = "failed" }) end'') "Previous failed test")
+      (mkKey "n" "<leader>nd" (raw ''function() require("neotest").run.run({ strategy = "dap" }) end'') "Debug nearest test")
+
+      # Debug (nvim-dap; Go and Python set up in go.nix and python.nix). The debugger panels
+      # open when a session starts and close when it ends.
+      (mkKey "n" "<leader>db" (raw ''function() require("dap").toggle_breakpoint() end'') "Toggle breakpoint")
+      (mkKey "n" "<leader>dB" (raw ''function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end'') "Conditional breakpoint")
+      (mkKey "n" "<leader>dc" (raw ''function() require("dap").continue() end'') "Start / continue")
+      (mkKey "n" "<leader>do" (raw ''function() require("dap").step_over() end'') "Step over")
+      (mkKey "n" "<leader>di" (raw ''function() require("dap").step_into() end'') "Step into")
+      (mkKey "n" "<leader>dO" (raw ''function() require("dap").step_out() end'') "Step out")
+      (mkKey "n" "<leader>dC" (raw ''function() require("dap").run_to_cursor() end'') "Run to cursor")
+      (mkKey "n" "<leader>dl" (raw ''function() require("dap").run_last() end'') "Run last again")
+      (mkKey "n" "<leader>dt" (raw ''function() require("dap").terminate() end'') "Stop")
+      (mkKey "n" "<leader>dr" (raw ''function() require("dap").repl.toggle() end'') "REPL")
+      (mkKey "n" "<leader>du" (raw ''function() require("dapui").toggle() end'') "Show / hide panels")
+      (mkKey ["n" "v"] "<leader>de" (raw ''function() require("dapui").eval() end'') "Value of expression")
 
       # Windows
       (mkKey "n" "<leader>wv" "<cmd>vsplit<CR>" "Split vertically")
@@ -304,6 +331,42 @@ in {
       vim-surround.enable = true;
       lazygit.enable = true;
       trouble.enable = true;
+      # Highlights TODO, FIXME, HACK, NOTE, ... in comments; \ft and \xt list them.
+      todo-comments.enable = true;
+      flash.enable = true;
+
+      # Edit a folder like a text buffer (-). nvim-tree stays the file tree for `nvim .`.
+      oil = {
+        enable = true;
+        settings = {
+          default_file_explorer = false;
+          view_options.show_hidden = true;
+          delete_to_trash = true;
+        };
+      };
+
+      # Debugger: breakpoints, stepping, variables and call stack panels, and values shown next to
+      # the code while paused.
+      dap = {
+        enable = true;
+        signs = {
+          dapBreakpoint = {
+            text = "●";
+            texthl = "DiagnosticError";
+          };
+          dapBreakpointCondition = {
+            text = "◆";
+            texthl = "DiagnosticWarn";
+          };
+          dapStopped = {
+            text = "▶";
+            texthl = "DiagnosticOk";
+            linehl = "Visual";
+          };
+        };
+      };
+      dap-ui.enable = true;
+      dap-virtual-text.enable = true;
 
       # Test runner; pass/fail marks show next to each test. TypeScript/JavaScript here, Go and
       # Python adapters in go.nix and python.nix.
@@ -342,6 +405,10 @@ in {
           {
             __unkeyed-1 = "<leader>n";
             group = "Tests";
+          }
+          {
+            __unkeyed-1 = "<leader>d";
+            group = "Debug";
           }
           {
             __unkeyed-1 = "<leader>w";
@@ -392,6 +459,14 @@ in {
     ];
 
     extraConfigLua = ''
+      -- Open the debugger panels when a debug session starts, and close them when no session is
+      -- left, however it ended (finished, crashed, or stopped with \dt).
+      local dap, dapui = require("dap"), require("dapui")
+      dap.listeners.after.event_initialized["dapui"] = function() dapui.open() end
+      dap.listeners.on_session["dapui"] = function(_, new)
+        if new == nil then dapui.close() end
+      end
+
       -- autosave-nvim is nullishamy/autosave.nvim. Each top-level option replaces its default
       -- entirely, so the filters list keeps the three the plugin needs to work.
       local autosave_filters = require("autosave.filters")
