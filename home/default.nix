@@ -8,6 +8,7 @@
     ./kitty.nix
     ./vscode.nix
     ./kubernetes.nix
+    ./go.nix
   ];
 
   home.stateVersion = "25.11";
