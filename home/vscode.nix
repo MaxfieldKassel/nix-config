@@ -32,6 +32,10 @@
       # Terraform support for vscode
       # https://marketplace.visualstudio.com/items?itemName=hashicorp.terraform
       hashicorp.terraform
+
+      # ShellCheck warnings in shell scripts
+      # https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck
+      timonwong.shellcheck
     ];
 
     # VSCode settings

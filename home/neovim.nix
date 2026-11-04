@@ -51,6 +51,9 @@ in {
       splitright = true;
       splitbelow = true;
       updatetime = 250;
+      # Fold by code structure (zc/zo/za, zR opens all), but open files fully unfolded.
+      foldlevel = 99;
+      foldlevelstart = 99;
       # Shown with \tl (toggles `list`)
       listchars = {
         tab = "→ ";
@@ -63,8 +66,11 @@ in {
     colorschemes.onedark.enable = true;
 
     # Show diagnostic messages inline (Neovim 0.11+ only shows signs by default).
+    # Diagnostics: the margin marks every problem line; the full message shows under the line the
+    # cursor is on (Ctrl-w d opens it in a popup).
     diagnostic.settings = {
-      virtual_text = true;
+      virtual_text = false;
+      virtual_lines.current_line = true;
       severity_sort = true;
       float.border = "rounded";
     };
@@ -74,9 +80,23 @@ in {
     # Neovim's built-in LSP keys: K hover, grn rename, gra code action, grr references,
     # gri implementation, [d / ]d next/previous diagnostic. gd is added below.
     lsp.servers = {
-      pyright.enable = true;
-      ruff.enable = true;
-      ts_ls.enable = true;
+      # Type hints (\th) for TypeScript/JavaScript.
+      ts_ls = {
+        enable = true;
+        config.settings = let
+          inlayHints = {
+            includeInlayParameterNameHints = "all";
+            includeInlayFunctionParameterTypeHints = true;
+            includeInlayVariableTypeHints = true;
+            includeInlayPropertyDeclarationTypeHints = true;
+            includeInlayFunctionLikeReturnTypeHints = true;
+            includeInlayEnumMemberValueHints = true;
+          };
+        in {
+          typescript = {inherit inlayHints;};
+          javascript = {inherit inlayHints;};
+        };
+      };
       # Completion, hover docs and checks for this repo's nix-darwin/NixOS and home-manager options.
       nixd = {
         enable = true;
@@ -132,7 +152,7 @@ in {
       (mkKey ["n" "v"] "<leader>cf" (raw ''function() require("conform").format({ async = true, lsp_format = "fallback" }) end'') "Format")
 
       # Git
-      (mkKey "n" "<leader>gg" "<cmd>LazyGit<CR>" "Lazygit")
+      (mkKey "n" "<leader>lg" "<cmd>LazyGit<CR>" "Lazygit")
       (mkKey "n" "<leader>gH" "<cmd>Gitsigns preview_hunk<CR>" "Preview hunk")
       (mkKey "n" "<leader>gB" "<cmd>Gitsigns toggle_current_line_blame<CR>" "Toggle line blame")
       (mkKey "n" "<leader>gD" "<cmd>Gitsigns diffthis<CR>" "Diff file")
@@ -140,6 +160,26 @@ in {
       (mkKey "n" "[h" (raw ''function() require("gitsigns").nav_hunk("prev") end'') "Previous git change")
       (mkKey "n" "<leader>gs" "<cmd>Gitsigns stage_hunk<CR>" "Stage/unstage change")
       (mkKey "n" "<leader>gr" "<cmd>Gitsigns reset_hunk<CR>" "Undo change")
+
+      # Problems (Trouble): lists you can jump through; q closes, Enter jumps.
+      (mkKey "n" "<leader>xx" "<cmd>Trouble diagnostics toggle<CR>" "All problems")
+      (mkKey "n" "<leader>xb" "<cmd>Trouble diagnostics toggle filter.buf=0<CR>" "Problems in this file")
+      (mkKey "n" "<leader>xs" "<cmd>Trouble symbols toggle focus=false<CR>" "Symbols outline")
+      (mkKey "n" "<leader>xr" "<cmd>Trouble lsp toggle focus=false win.position=right<CR>" "References / definitions")
+      (mkKey "n" "<leader>xq" "<cmd>Trouble qflist toggle<CR>" "Quickfix list")
+
+      # Tests (neotest; the adapters are set per language)
+      (mkKey "n" "<leader>nn" (raw ''function() require("neotest").run.run() end'') "Run nearest test")
+      (mkKey "n" "<leader>nf" (raw ''function() require("neotest").run.run(vim.fn.expand("%")) end'') "Run tests in file")
+      (mkKey "n" "<leader>na" (raw ''function() require("neotest").run.run(vim.uv.cwd()) end'') "Run all tests")
+      (mkKey "n" "<leader>nl" (raw ''function() require("neotest").run.run_last() end'') "Run last again")
+      (mkKey "n" "<leader>nx" (raw ''function() require("neotest").run.stop() end'') "Stop")
+      (mkKey "n" "<leader>nw" (raw ''function() require("neotest").watch.toggle(vim.fn.expand("%")) end'') "Watch file (rerun on save)")
+      (mkKey "n" "<leader>ns" (raw ''function() require("neotest").summary.toggle() end'') "Test tree")
+      (mkKey "n" "<leader>no" (raw ''function() require("neotest").output.open({ enter = true, auto_close = true }) end'') "Test output")
+      (mkKey "n" "<leader>nO" (raw ''function() require("neotest").output_panel.toggle() end'') "Output panel")
+      (mkKey "n" "]n" (raw ''function() require("neotest").jump.next({ status = "failed" }) end'') "Next failed test")
+      (mkKey "n" "[n" (raw ''function() require("neotest").jump.prev({ status = "failed" }) end'') "Previous failed test")
 
       # Windows
       (mkKey "n" "<leader>wv" "<cmd>vsplit<CR>" "Split vertically")
@@ -150,6 +190,7 @@ in {
       # File tree and toggles
       (mkKey "n" "<leader>e" "<cmd>NvimTreeToggle<CR>" "File tree")
       (mkKey "n" "<leader>tl" "<cmd>set list!<CR>" "Show whitespace")
+      (mkKey "n" "<leader>th" (raw "function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end") "Type hints")
 
       # Claude Code
       (mkKey "n" "<leader>ac" "<cmd>ClaudeCode<CR>" "Open Claude Code")
@@ -180,7 +221,6 @@ in {
         autoInstall.enable = true;
         settings.formatters_by_ft = {
           nix = ["alejandra"];
-          python = ["ruff_organize_imports" "ruff_format"];
           lua = ["stylua"];
           sh = ["shfmt"];
           bash = ["shfmt"];
@@ -229,13 +269,13 @@ in {
         enable = true;
         highlight.enable = true;
         indent.enable = true;
+        folding.enable = true;
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
           nix
           lua
           luadoc
           vim
           vimdoc
-          python
           javascript
           typescript
           tsx
@@ -263,6 +303,17 @@ in {
       web-devicons.enable = true;
       vim-surround.enable = true;
       lazygit.enable = true;
+      trouble.enable = true;
+
+      # Test runner; pass/fail marks show next to each test. TypeScript/JavaScript here, Go and
+      # Python adapters in go.nix and python.nix.
+      neotest = {
+        enable = true;
+        adapters = {
+          vitest.enable = true;
+          jest.enable = true;
+        };
+      };
 
       # Group names for the \ menus; each keymap above carries its own description.
       which-key = {
@@ -279,6 +330,18 @@ in {
           {
             __unkeyed-1 = "<leader>g";
             group = "Git";
+          }
+          {
+            __unkeyed-1 = "<leader>l";
+            group = "Lazygit";
+          }
+          {
+            __unkeyed-1 = "<leader>x";
+            group = "Problems";
+          }
+          {
+            __unkeyed-1 = "<leader>n";
+            group = "Tests";
           }
           {
             __unkeyed-1 = "<leader>w";

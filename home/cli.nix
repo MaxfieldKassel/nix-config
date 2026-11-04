@@ -21,6 +21,11 @@
     # https://github.com/tldr-pages/tlrc
     tlrc
 
+    # Shell script linter and formatter (Neovim's bash server already runs shellcheck as you type).
+    # https://github.com/koalaman/shellcheck
+    shellcheck
+    shfmt
+
     # Fastfetch is a replacement for neofetch
     fastfetch
 

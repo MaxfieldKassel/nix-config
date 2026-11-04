@@ -9,6 +9,7 @@
     ./vscode.nix
     ./kubernetes.nix
     ./go.nix
+    ./python.nix
   ];
 
   home.stateVersion = "25.11";
