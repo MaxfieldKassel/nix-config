@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
+    # Garage 2.4.1, matching the NAS app; nixpkgs' 2.5.0 is Linux-only. Bump with the app.
+    nixpkgs-garage.url = "github:NixOS/nixpkgs/fe13242281a67641c0102cdb1087f0ebe586c7df";
     nix-darwin.url = "github:nix-darwin/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +29,7 @@
   outputs = {
     nixpkgs,
     nixpkgs-stable,
+    nixpkgs-garage,
     nix-darwin,
     home-manager,
     nixvim,
@@ -49,7 +52,7 @@
         else nixpkgs.lib.nixosSystem
       ) {
         inherit system;
-        specialArgs = {inherit user nixpkgs-stable;};
+        specialArgs = {inherit user nixpkgs-stable nixpkgs-garage;};
         modules = [
           ./modules/shared.nix
           ./modules/theme.nix

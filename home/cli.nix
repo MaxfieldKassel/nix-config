@@ -49,6 +49,11 @@
     # https://github.com/jesseduffield/lazydocker
     lazydocker
 
+    # CLI for the Garage S3 server on the NAS, used over RPC (port 30187).
+    # Keep the major.minor in step with the TrueNAS app's Garage version.
+    # https://garagehq.deuxfleurs.fr
+    garage_2
+
     # Pretty fancy and modern terminal file manager
     # https://github.com/yorukot/superfile
     # superfile

@@ -1,5 +1,16 @@
 # System-level config shared by macOS and NixOS. Personal CLI tools live in home/cli.nix.
-{pkgs, ...}: {
+{
+  pkgs,
+  nixpkgs-garage,
+  ...
+}: {
+  # The garage CLI must match the NAS's Garage version (see flake.nix).
+  nixpkgs.overlays = [
+    (_final: prev: {
+      garage_2 = nixpkgs-garage.legacyPackages.${prev.stdenv.hostPlatform.system}.garage_2;
+    })
+  ];
+
   environment.systemPackages = with pkgs; [
     docker
     docker-compose

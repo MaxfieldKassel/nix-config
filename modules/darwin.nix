@@ -184,7 +184,7 @@ in {
         "/Applications/Claude.app"
 
         # Productivity Tools
-        "${pkgs.vscode}/Applications/Visual Studio Code.app"
+	# "${pkgs.vscode}/Applications/Visual Studio Code.app"
         "${pkgs.kitty}/Applications/kitty.app"
         "/System/Applications/Calendar.app"
         "/Applications/Things3.app"
