@@ -51,6 +51,9 @@ in {
       splitright = true;
       splitbelow = true;
       updatetime = 250;
+      # Fold by code structure (zc/zo/za, zR opens all), but open files fully unfolded.
+      foldlevel = 99;
+      foldlevelstart = 99;
       # Shown with \tl (toggles `list`)
       listchars = {
         tab = "→ ";
@@ -63,8 +66,11 @@ in {
     colorschemes.onedark.enable = true;
 
     # Show diagnostic messages inline (Neovim 0.11+ only shows signs by default).
+    # Diagnostics: the margin marks every problem line; the full message shows under the line the
+    # cursor is on (Ctrl-w d opens it in a popup).
     diagnostic.settings = {
-      virtual_text = true;
+      virtual_text = false;
+      virtual_lines.current_line = true;
       severity_sort = true;
       float.border = "rounded";
     };
@@ -76,7 +82,23 @@ in {
     lsp.servers = {
       pyright.enable = true;
       ruff.enable = true;
-      ts_ls.enable = true;
+      # Type hints (\th) for TypeScript/JavaScript.
+      ts_ls = {
+        enable = true;
+        config.settings = let
+          inlayHints = {
+            includeInlayParameterNameHints = "all";
+            includeInlayFunctionParameterTypeHints = true;
+            includeInlayVariableTypeHints = true;
+            includeInlayPropertyDeclarationTypeHints = true;
+            includeInlayFunctionLikeReturnTypeHints = true;
+            includeInlayEnumMemberValueHints = true;
+          };
+        in {
+          typescript = {inherit inlayHints;};
+          javascript = {inherit inlayHints;};
+        };
+      };
       # Completion, hover docs and checks for this repo's nix-darwin/NixOS and home-manager options.
       nixd = {
         enable = true;
@@ -150,6 +172,7 @@ in {
       # File tree and toggles
       (mkKey "n" "<leader>e" "<cmd>NvimTreeToggle<CR>" "File tree")
       (mkKey "n" "<leader>tl" "<cmd>set list!<CR>" "Show whitespace")
+      (mkKey "n" "<leader>th" (raw "function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end") "Type hints")
 
       # Claude Code
       (mkKey "n" "<leader>ac" "<cmd>ClaudeCode<CR>" "Open Claude Code")
@@ -229,6 +252,7 @@ in {
         enable = true;
         highlight.enable = true;
         indent.enable = true;
+        folding.enable = true;
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
           nix
           lua
